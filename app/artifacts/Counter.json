@@ -1,0 +1,75 @@
+{
+	"schemaVersion": "2.0.0",
+	"contractName": "Counter",
+	"compilerOutput": {
+		"abi": [
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "newValue",
+						"type": "uint256"
+					}
+				],
+				"name": "Increased",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "increase",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "value",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"evm": {
+			"bytecode": {
+				"object": "0x608060405234801561001057600080fd5b506101a8806100206000396000f3fe608060405234801561001057600080fd5b50600436106100365760003560e01c80633fa4f2451461003b578063e8927fbc14610059575b600080fd5b610043610063565b60405161005091906100d2565b60405180910390f35b610061610069565b005b60005481565b6001600054610078919061011c565b6000819055507f3496c3ede4ec3ab3686712aa1c238593ea6a42df83f98a5ec7df9834cfa577c56000546040516100af91906100d2565b60405180910390a1565b6000819050919050565b6100cc816100b9565b82525050565b60006020820190506100e760008301846100c3565b92915050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b6000610127826100b9565b9150610132836100b9565b9250827fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff03821115610167576101666100ed565b5b82820190509291505056fea2646970667358221220578661f51a932b2b77e01a4aeefbbcac7d71f59cf659d49da2bd69c53880bc7e64736f6c63430008090033"
+			}
+		}
+	},
+	"sourceTreeHashHex": "0xd06dcf7021ebcd1bee7591868888de75d11c01760671c80b22b87e2298f5d244",
+	"sources": {
+		"./Counter.sol": {
+			"id": 0,
+			"content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.7; \n\ncontract Counter {\n  uint256 public value;\n\n  event Increased(uint256 newValue);\n\n  function increase() public {\n    value = value + 1;\n\n    emit Increased(value);\n  }\n}"
+		}
+	},
+	"sourceCodes": {
+		"./Counter.sol": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.7; \n\ncontract Counter {\n  uint256 public value;\n\n  event Increased(uint256 newValue);\n\n  function increase() public {\n    value = value + 1;\n\n    emit Increased(value);\n  }\n}"
+	},
+	"compiler": {
+		"name": "solc",
+		"version": "0.8.9+commit.e5eed63a",
+		"settings": {
+			"remappings": [],
+			"optimizer": {
+				"enabled": false
+			},
+			"outputSelection": {
+				"*": {
+					"*": [
+						"abi",
+						"evm.bytecode.object"
+					]
+				}
+			}
+		}
+	},
+	"chains": {}
+}
