@@ -1,53 +1,64 @@
-import React, { FC } from "react"
-import { Interface } from "@ethersproject/abi"
+import { FC, useCallback, useEffect, useState } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 import { Contract } from "@ethersproject/contracts"
-import {
-  ChainId,
-  useEthers,
-  useContractCall,
-  useContractFunction,
-} from "@usedapp/core"
-
-// build
-// import COUNTER_ABI from "artifacts/Counter.json"
 
 // styles
-import styles from "styles/Home.module.css"
+import { useAccount, useChainId, useCounterContract } from "~/hooks"
 
-type Props = {
-  contract: Contract
+enum ChainId {
+  Rinkeby = 4,
 }
 
-const Information: FC<Props> = ({ contract }) => {
-  // web3 hooks
-  const { account } = useEthers()
+const Information: FC = () => {
+  const [counter, setCounter] = useState<undefined | number>(undefined)
 
-  // constants
-  const COUNTER_ADDRESS = "0x1D2561D18dD2fc204CcC8831026d28375065ed53"
-  const counterInterface = new Interface([])
+  const account = useAccount()
+  const counterContract = useCounterContract()
 
-  // contract hooks
-  const [bigCounter] =
-    useContractCall({
-      abi: counterInterface,
-      address: COUNTER_ADDRESS,
-      method: "value",
-      args: [],
-    }) ?? []
+  function bigToString(bigNumber: BigNumber) {
+    return BigNumber.from(bigNumber).toString()
+  }
 
-  const { send } = useContractFunction(contract, "increase", {
-    transactionName: "Increase count",
-  })
+  const getCounterCount = useCallback(async (counterContract: Contract) => {
+    if (!counterContract) return
 
-  // constants
-  const counter = bigCounter ? BigNumber.from(bigCounter).toString() : 0
+    const bigCounterCount = await counterContract.value()
+    const counter = bigToString(bigCounterCount)
+
+    setCounter(Number(counter))
+  }, [])
+
+  useEffect(() => {
+    if (!counterContract) return
+
+    getCounterCount(counterContract)
+  }, [counterContract, getCounterCount])
+
+  useEffect(() => {
+    if (!counterContract) return
+
+    counterContract.on("Increased", (bigNextCounter) => {
+      const nextCounter = bigToString(bigNextCounter)
+
+      setCounter(Number(nextCounter))
+    })
+
+    return () => {
+      counterContract.off("Increased", () => {
+        console.warn(`Unsubscribed from "Increased" Counter contract's event`)
+      })
+    }
+  }, [counterContract, getCounterCount])
 
   // handlers
-  const handleIncrease = () => send()
+  async function handleIncrease(): Promise<void> {
+    if (!counterContract) return
+
+    await counterContract.increase()
+  }
 
   return (
-    <div className={styles.section}>
+    <div className="flex flex-col items-start">
       <button onClick={handleIncrease}>Increase</button>
       <span>Counter: {counter}</span>
       <span>Signer: {account}</span>
@@ -57,36 +68,17 @@ const Information: FC<Props> = ({ contract }) => {
 
 const Counter: FC = () => {
   // web3 hooks
-  const { activateBrowserWallet, account, chainId } = useEthers()
-
-  // constants
-  // const COUNTER_ADDRESS = "0x1D2561D18dD2fc204CcC8831026d28375065ed53"
-  const contract = undefined
-  // const contract = library
-  //   ? new Contract(COUNTER_ADDRESS, COUNTER_ABI, library)
-  //   : undefined
-
-  // handlers
-  const handleOpenWallet = () => activateBrowserWallet()
+  const chainId = useChainId()
 
   if (chainId !== ChainId.Rinkeby) {
     return (
-      <div className={styles.section}>
+      <div>
         <h3>This section works on Rinkeby. Try changing to it from Metamask</h3>
       </div>
     )
   }
 
-  if (!account || !contract) {
-    return (
-      <div className={styles.section}>
-        <button onClick={handleOpenWallet}>Open wallet</button>
-        <h3>Connect the provider</h3>
-      </div>
-    )
-  }
-
-  return <Information contract={contract} />
+  return <Information />
 }
 
 export default Counter

@@ -138,12 +138,6 @@
         "prev": "const",
         "next": "if"
       }
-    ],
-    "no-magic-numbers": [
-      "error", {
-        "ignoreArrayIndexes": true,
-        "detectObjects": true
-      }
     ]
   }
 }

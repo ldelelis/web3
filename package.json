@@ -17,7 +17,7 @@
     "dev:remix": "remix watch",
     "dev:worker": "esbuild --define:process.env.NODE_ENV='\"development\"' --bundle --sourcemap --outdir=dist ./worker",
     "dev:miniflare": "miniflare --build-command \"npm run dev:worker\" --watch",
-    "abis:gen:types": "typechain --target=ethers-v5 '**/*.abi.json' --out-dir src/abis/types",
+    "abis:gen:types": "typechain --target=ethers-v5 '**/*.abi.json' --out-dir app/abis/types",
     "abis:gen": "sol-compiler",
     "ganache:start": "ganache-cli -d --db ganachedb",
     "geth:account": "geth --datadir=gethdb account new",
@@ -26,6 +26,8 @@
   "dependencies": {
     "@remix-run/cloudflare-workers": "^1.1.1",
     "@remix-run/react": "^1.1.1",
+    "dotenv": "^10.0.0",
+    "ethers": "^5.5.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "remix": "^1.1.1"
