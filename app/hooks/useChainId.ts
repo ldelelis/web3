@@ -7,7 +7,7 @@ export function useChainId(): number | undefined {
   const web3Provider = useWeb3Provider()
 
   useEffect(() => {
-    function getChainId(hexChainId: string): number {
+    function hexToNumber(hexChainId: string): number {
       return Number(hexChainId.slice(2))
     }
 
@@ -15,7 +15,7 @@ export function useChainId(): number | undefined {
       if (!web3Provider) return
 
       const hexChainId = await web3Provider.send("eth_chainId", [])
-      const chainId = getChainId(hexChainId)
+      const chainId = hexToNumber(hexChainId)
 
       setChainId(chainId)
     }
