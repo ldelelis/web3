@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react"
-import { useWeb3Provider } from "./useWeb3Provider"
+import { Web3Provider } from "@ethersproject/providers"
+
+import { useWeb3Provider } from "~/hooks"
 
 export function useAccount(): string | undefined {
   const [account, setAccount] = useState<undefined | string>(undefined)
@@ -7,15 +9,15 @@ export function useAccount(): string | undefined {
   const web3Provider = useWeb3Provider()
 
   useEffect(() => {
-    async function getAccount() {
-      if (!web3Provider) return
+    if (!web3Provider) return
 
+    async function getAccount(web3Provider: Web3Provider) {
       const accounts = await web3Provider.send("eth_requestAccounts", [])
 
       setAccount(accounts[0])
     }
 
-    getAccount()
+    getAccount(web3Provider)
   }, [web3Provider])
 
   return account
