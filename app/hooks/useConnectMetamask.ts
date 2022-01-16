@@ -1,14 +1,14 @@
 import invariant from "tiny-invariant"
 
-import { useWeb3Provider } from "~/hooks"
+import { useMetamask } from "~/hooks"
 
 export function useConnectMetamask(): () => Promise<void> {
-  const web3Provider = useWeb3Provider()
+  const metamask = useMetamask()
 
   async function connectMetamask() {
-    invariant(web3Provider, "You need to have Metamask installed")
+    invariant(metamask, "You need to have Metamask installed")
 
-    await web3Provider.send("eth_requestAccounts", [])
+    await metamask.send("eth_requestAccounts", [])
   }
 
   return connectMetamask
