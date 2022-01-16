@@ -21,7 +21,7 @@ async function main() {
   await waveContract.getTotalWaves()
 }
 
-const runMain = async () => {
+async function runMain() {
   try {
     await main()
 

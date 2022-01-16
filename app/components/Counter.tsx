@@ -1,4 +1,5 @@
 import { FC, useCallback, useEffect, useState } from "react"
+
 import { BigNumber } from "@ethersproject/bignumber"
 import { Contract } from "@ethersproject/contracts"
 
@@ -34,21 +35,24 @@ const Information: FC = () => {
     getCounterCount(counterContract)
   }, [counterContract, getCounterCount])
 
-  useEffect(() => {
-    if (!counterContract) return
+  useEffect(
+    function handleIncreaseEvent() {
+      if (!counterContract) return
 
-    counterContract.on("Increased", (bigNextCounter) => {
-      const nextCounter = bigToString(bigNextCounter)
+      counterContract.on("Increased", (bigNextCounter) => {
+        const nextCounter = bigToString(bigNextCounter)
 
-      setCounter(Number(nextCounter))
-    })
-
-    return () => {
-      counterContract.off("Increased", () => {
-        console.warn(`Unsubscribed from "Increased" Counter contract's event`)
+        setCounter(Number(nextCounter))
       })
-    }
-  }, [counterContract, getCounterCount])
+
+      return () => {
+        counterContract.off("Increased", () => {
+          console.warn(`Unsubscribed from "Increased" Counter contract's event`)
+        })
+      }
+    },
+    [counterContract, getCounterCount],
+  )
 
   // handlers
   async function handleIncrease(): Promise<void> {
