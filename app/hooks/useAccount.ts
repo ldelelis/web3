@@ -12,7 +12,7 @@ export function useAccount(): string | undefined {
     if (!web3Provider) return
 
     async function getAccount(web3Provider: Web3Provider) {
-      const accounts = await web3Provider.send("eth_requestAccounts", [])
+      const accounts = await web3Provider.send("eth_accounts", [])
 
       setAccount(accounts[0])
     }
