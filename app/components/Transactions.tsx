@@ -1,37 +1,36 @@
-import React, { FC, useEffect, useState } from "react"
-import { useEthers, ChainId } from "@usedapp/core"
+import React, { FC } from "react"
+// import { useEthers, ChainId } from "@usedapp/core"
 
 // styles
-import styles from "styles/Home.module.css"
+// import styles from "styles/Home.module.css"
 
 const Transactions: FC = () => {
   // states
-  const [accounts, setAccounts] = useState<any[] | undefined>(undefined)
-  console.log("accounts", accounts)
+  // const [accounts, setAccounts] = useState<any[] | undefined>(undefined)
 
   // const web3Provider = new Web3.providers.HttpProvider('http://localhost:8545');
   // const provider = new Web3Provider(web3Provider)
 
   // web3 hooks
-  const { library } = useEthers()
-  const { chainId, library } = useEthers()
+  // const { library } = useEthers()
+  // const { chainId, library } = useEthers()
 
   // constants
-  const isDisconnected = !library
+  // const isDisconnected = !library
 
   // effects
-  useEffect(() => {
-    if (library) {
-      const getAccounts = async () => {
-        const accounts = await library.listAccounts()
-        console.log("getAccounts ~ accounts", accounts)
+  // useEffect(() => {
+  //   if (library) {
+  //     const getAccounts = async () => {
+  //       const accounts = await library.listAccounts()
+  //       console.log("getAccounts ~ accounts", accounts)
 
-        return accounts
-      }
+  //       return accounts
+  //     }
 
-      getAccounts().then((accounts) => setAccounts(accounts))
-    }
-  }, [library])
+  //     getAccounts().then((accounts) => setAccounts(accounts))
+  //   }
+  // }, [library])
 
   // if (isDisconnected) {
   //   return (
@@ -55,9 +54,9 @@ const Transactions: FC = () => {
   // }
 
   return (
-    <div className={styles.section}>
-      <h3>Transactions</h3>
-    </div>
+    // <div className={styles.section}>
+    <h3>Transactions</h3>
+    // </div>
   )
 }
 

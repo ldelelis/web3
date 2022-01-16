@@ -1,8 +1,13 @@
 {
   "private": true,
-  "name": "remix-app-template",
-  "description": "",
-  "license": "",
+  "name": "web3",
+  "description": "My collection of web3 exercises, all in one place, well separated",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14"
+  },
+  "sideEffects": false,
+  "main": "dist/worker.js",
   "scripts": {
     "commit": "npx cz",
     "deploy": "npm run build && wrangler publish",
@@ -24,6 +29,9 @@
     "geth:start": "geth --datadir=gethdb --rpc --ws --dev --dev.period=2"
   },
   "dependencies": {
+    "@ethersproject/abi": "^5.5.0",
+    "@ethersproject/bignumber": "^5.5.0",
+    "@ethersproject/providers": "^5.5.2",
     "@remix-run/cloudflare-workers": "^1.1.1",
     "@remix-run/react": "^1.1.1",
     "react": "^17.0.2",
@@ -32,6 +40,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^2.2.2",
+    "@cloudflare/wrangler": "^1.19.7",
     "@commitlint/cli": "^16.0.2",
     "@commitlint/config-conventional": "^16.0.0",
     "@nomiclabs/hardhat-ethers": "^2.0.4",
@@ -76,10 +85,5 @@
     "ts-node": "^10.4.0",
     "typechain": "^7.0.0",
     "typescript": "^4.5.4"
-  },
-  "engines": {
-    "node": ">=14"
-  },
-  "sideEffects": false,
-  "main": "dist/worker.js"
+  }
 }
