@@ -16,7 +16,7 @@ export default function Wave(): ReactElement {
         <div className="flex justify-end items-center w-full">
           {account ? (
             <h3>
-              Connected to
+              Connected to{" "}
               <span className="text-indigo-500 underline underline-offset-2">
                 {account}
               </span>
