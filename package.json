@@ -26,7 +26,8 @@
     "abis:gen": "sol-compiler",
     "ganache:start": "ganache-cli -d --db ganachedb",
     "geth:account": "geth --datadir=gethdb account new",
-    "geth:start": "geth --datadir=gethdb --rpc --ws --dev --dev.period=2"
+    "geth:start": "geth --datadir=gethdb --rpc --ws --dev --dev.period=2",
+    "hardhat:deploy:wave": "hardhat run scripts/deploy.ts --network rinkeby"
   },
   "dependencies": {
     "@ethersproject/abi": "^5.5.0",
