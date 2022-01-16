@@ -36,7 +36,7 @@ const Information: FC = () => {
   }, [counterContract, getCounterCount])
 
   useEffect(
-    function handleIncreaseEvent() {
+    function handleIncreasedEvent() {
       if (!counterContract) return
 
       counterContract.on("Increased", (bigNextCounter) => {
