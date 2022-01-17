@@ -1,9 +1,14 @@
-import { ReactElement } from "react"
+import { ReactElement, useEffect, useState } from "react"
 import invariant from "tiny-invariant"
+import { Contract } from "@ethersproject/contracts"
+import { BigNumber } from "@ethersproject/bignumber"
 
+import { generateArrayOfNumbers } from "~/helpers"
 import { useAccount, useConnectMetamask, useWavePortalContract } from "~/hooks"
 
 export default function Wave(): ReactElement {
+  const [totalWaves, setTotalWaves] = useState<undefined | number>()
+
   const connectMetamask = useConnectMetamask()
   const account = useAccount()
   const wavePortalContract = useWavePortalContract()
@@ -12,6 +17,23 @@ export default function Wave(): ReactElement {
     connectMetamask()
   }
 
+  async function getTotalWaves(wavePortalContract: Contract): Promise<number> {
+    return wavePortalContract
+      .getTotalWaves()
+      .then((bigTotalWaves: BigNumber) => bigTotalWaves.toNumber())
+  }
+
+  useEffect(
+    function getInitialTotalWaves() {
+      if (!wavePortalContract) return
+
+      getTotalWaves(wavePortalContract).then((totalWaves) =>
+        setTotalWaves(totalWaves),
+      )
+    },
+    [wavePortalContract],
+  )
+
   async function handleWave(): Promise<void> {
     try {
       invariant(
@@ -19,16 +41,15 @@ export default function Wave(): ReactElement {
         "You must instance Wave Portal contract in order to wave",
       )
 
-      let count = await wavePortalContract.getTotalWaves()
-
       const waveTxn = await wavePortalContract.wave()
-      console.log("Mining...", waveTxn.hash)
+      console.log("Mining =>", waveTxn.hash)
 
       await waveTxn.wait()
-      console.log("Mined -- ", waveTxn.hash)
+      console.log("Mined => ", waveTxn.hash)
 
-      count = await wavePortalContract.getTotalWaves()
-      console.log("Retrieved total wave count...", count.toNumber())
+      getTotalWaves(wavePortalContract).then((totalWaves) =>
+        setTotalWaves(totalWaves),
+      )
     } catch (error) {
       console.log(error)
     }
@@ -64,10 +85,13 @@ export default function Wave(): ReactElement {
           )}
         </div>
         <div className="flex flex-col w-full space-y-2">
-          <div className="p-2 bg-red-300">card 1</div>
-          <div className="p-2 bg-red-300">card 2</div>
-          <div className="p-2 bg-red-300">card 3</div>
-          <div className="p-2 bg-red-300">card 4</div>
+          {totalWaves
+            ? generateArrayOfNumbers(totalWaves).map((wave) => (
+                <div key={`wave_card_${wave}`} className="p-2 bg-red-300">
+                  wave {wave}
+                </div>
+              ))
+            : null}
         </div>
       </div>
     </div>
