@@ -3,14 +3,22 @@ import invariant from "tiny-invariant"
 import { Contract } from "@ethersproject/contracts"
 import { BigNumber } from "@ethersproject/bignumber"
 
+import { ChainId } from "~/types"
 import { generateArrayOfNumbers } from "~/helpers"
-import { useAccount, useConnectMetamask, useWavePortalContract } from "~/hooks"
+import {
+  useAccount,
+  useChainId,
+  useConnectMetamask,
+  useWavePortalContract,
+} from "~/hooks"
 
 export default function Wave(): ReactElement {
   const [totalWaves, setTotalWaves] = useState<undefined | number>()
+  // web3 hooks
 
-  const connectMetamask = useConnectMetamask()
+  const chainId = useChainId()
   const account = useAccount()
+  const connectMetamask = useConnectMetamask()
   const wavePortalContract = useWavePortalContract()
 
   async function handleConnectMetamaskClick(): Promise<void> {
@@ -53,6 +61,14 @@ export default function Wave(): ReactElement {
     } catch (error) {
       console.log(error)
     }
+  }
+
+  if (chainId !== ChainId.Rinkeby) {
+    return (
+      <div>
+        <h3>This section works on Rinkeby. Try changing to it from Metamask</h3>
+      </div>
+    )
   }
 
   return (

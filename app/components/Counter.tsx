@@ -4,11 +4,8 @@ import { BigNumber } from "@ethersproject/bignumber"
 import { Contract } from "@ethersproject/contracts"
 
 // styles
+import { ChainId } from "~/types"
 import { useAccount, useChainId, useCounterContract } from "~/hooks"
-
-enum ChainId {
-  Rinkeby = 4,
-}
 
 const Information: FC = () => {
   const [counter, setCounter] = useState<undefined | number>(undefined)
