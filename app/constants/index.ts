@@ -1,2 +1,2 @@
-export * from "./providers"
+export * from "./contracts"
 export * from "./artifacts"

@@ -1,5 +1,7 @@
+export { useSigner } from "./useSigner"
 export { useAccount } from "./useAccount"
 export { useChainId } from "./useChainId"
 export { useMetamask } from "./useMetamask"
 export { useConnectMetamask } from "./useConnectMetamask"
-export { useCounterContract } from "./useCounterContract"
+export { useCounterContract } from "./contracts/useCounterContract"
+export { useWavePortalContract } from "./contracts/useWavePortalContract"
