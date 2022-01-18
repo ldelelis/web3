@@ -101,12 +101,6 @@ export default function Wave(): ReactElement {
                   {account}
                 </span>
               </h3>
-              <button
-                className="p-2 bg-indigo-500 rounded-sm text-white"
-                onClick={handleWave}
-              >
-                Wave
-              </button>
             </>
           ) : (
             <button
@@ -127,6 +121,13 @@ export default function Wave(): ReactElement {
             value={message}
             onChange={handleMessageChange}
           />
+
+          <button
+            className="p-2 bg-indigo-500 rounded-sm text-white"
+            onClick={handleWave}
+          >
+            Wave
+          </button>
         </div>
         <section className="flex flex-col w-full space-y-2">
           {waves
