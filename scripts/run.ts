@@ -10,15 +10,19 @@ async function main() {
   console.log("Contract deployed to:", waveContract.address)
   console.log("Contract deployed by:", owner.address)
 
-  await waveContract.getTotalWaves()
+  const wavesCount = await waveContract.getWavesCount()
+  console.log("waveCount", wavesCount.toNumber())
 
-  const waveTxn = await waveContract.wave()
+  const waveTxn = await waveContract.wave("A message")
   await waveTxn.wait()
 
-  const randomWaveTx = await waveContract.connect(randomPerson).wave()
+  const randomWaveTx = await waveContract
+    .connect(randomPerson)
+    .wave("Random message")
   await randomWaveTx.wait()
 
-  await waveContract.getTotalWaves()
+  const waves = await waveContract.getWaves()
+  console.log("waves", waves)
 }
 
 async function runMain() {

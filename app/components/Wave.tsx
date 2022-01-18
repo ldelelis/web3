@@ -1,10 +1,9 @@
-import { ReactElement, useEffect, useState } from "react"
+import React, { ChangeEvent, ReactElement, useEffect, useState } from "react"
 import invariant from "tiny-invariant"
 import { Contract } from "@ethersproject/contracts"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { ChainId } from "~/types"
-import { generateArrayOfNumbers } from "~/helpers"
+import { ChainId, Wave } from "~/types"
 import {
   useAccount,
   useChainId,
@@ -13,8 +12,9 @@ import {
 } from "~/hooks"
 
 export default function Wave(): ReactElement {
-  const [totalWaves, setTotalWaves] = useState<undefined | number>()
-  // web3 hooks
+  const [waves, setWaves] = useState<Wave[] | undefined>(undefined)
+  const [message, setMessage] = useState<string>("")
+  const [wavesCount, setWavesCount] = useState<number>(0)
 
   const chainId = useChainId()
   const account = useAccount()
@@ -25,19 +25,36 @@ export default function Wave(): ReactElement {
     connectMetamask()
   }
 
-  async function getTotalWaves(wavePortalContract: Contract): Promise<number> {
+  function handleMessageChange(event: ChangeEvent<HTMLInputElement>): void {
+    const { value: message } = event.target
+
+    setMessage(message)
+  }
+
+  async function getWavesCount(wavePortalContract: Contract): Promise<number> {
     return wavePortalContract
-      .getTotalWaves()
-      .then((bigTotalWaves: BigNumber) => bigTotalWaves.toNumber())
+      .getWavesCount()
+      .then((bigWavesCount: BigNumber) => bigWavesCount.toNumber())
+  }
+
+  async function getWaves(wavePortalContract: Contract): Promise<Wave[]> {
+    return wavePortalContract.getWaves()
   }
 
   useEffect(
-    function getInitialTotalWaves() {
+    function getInitialWaves() {
       if (!wavePortalContract) return
 
-      getTotalWaves(wavePortalContract).then((totalWaves) =>
-        setTotalWaves(totalWaves),
-      )
+      getWaves(wavePortalContract).then(setWaves)
+    },
+    [wavePortalContract],
+  )
+
+  useEffect(
+    function getInitialWavesCount() {
+      if (!wavePortalContract) return
+
+      getWavesCount(wavePortalContract).then(setWavesCount)
     },
     [wavePortalContract],
   )
@@ -49,15 +66,14 @@ export default function Wave(): ReactElement {
         "You must instance Wave Portal contract in order to wave",
       )
 
-      const waveTxn = await wavePortalContract.wave()
+      const waveTxn = await wavePortalContract.wave(message)
       console.log("Mining =>", waveTxn.hash)
 
       await waveTxn.wait()
       console.log("Mined => ", waveTxn.hash)
 
-      getTotalWaves(wavePortalContract).then((totalWaves) =>
-        setTotalWaves(totalWaves),
-      )
+      getWavesCount(wavePortalContract).then(setWavesCount)
+      getWaves(wavePortalContract).then(setWaves)
     } catch (error) {
       console.log(error)
     }
@@ -74,6 +90,7 @@ export default function Wave(): ReactElement {
   return (
     <div className="flex flex-col justify-center items-center w-full">
       <h1 className="text-2xl">Wave at me</h1>
+      <h3>I have been waved {wavesCount} times</h3>
       <div className="flex flex-col items-stretch w-full space-y-2">
         <div className="flex justify-end items-center w-full space-x-2">
           {account ? (
@@ -100,15 +117,31 @@ export default function Wave(): ReactElement {
             </button>
           )}
         </div>
-        <div className="flex flex-col w-full space-y-2">
-          {totalWaves
-            ? generateArrayOfNumbers(totalWaves).map((wave) => (
-                <div key={`wave_card_${wave}`} className="p-2 bg-red-300">
-                  wave {wave}
-                </div>
+        <div className="flex justify-end items-center space-x-2">
+          <label aria-label="message" htmlFor="message">
+            Add your message:
+          </label>
+          <input
+            className="border-2 border-indigo-500 w-72 h-10 p-2"
+            id="message"
+            value={message}
+            onChange={handleMessageChange}
+          />
+        </div>
+        <section className="flex flex-col w-full space-y-2">
+          {waves
+            ? waves.map(({ message, waver }) => (
+                <article
+                  key={`wave_card_${waver}_${message.slice(0, 10)}`}
+                  className="p-2 bg-red-300"
+                >
+                  <text>
+                    Waver {waver} said: {message}
+                  </text>
+                </article>
               ))
             : null}
-        </div>
+        </section>
       </div>
     </div>
   )

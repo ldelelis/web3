@@ -3,7 +3,6 @@ import { FC, useCallback, useEffect, useState } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 import { Contract } from "@ethersproject/contracts"
 
-// styles
 import { ChainId } from "~/types"
 import { useAccount, useChainId, useCounterContract } from "~/hooks"
 
@@ -51,7 +50,6 @@ const Information: FC = () => {
     [counterContract, getCounterCount],
   )
 
-  // handlers
   async function handleIncrease(): Promise<void> {
     if (!counterContract) return
 
@@ -68,7 +66,6 @@ const Information: FC = () => {
 }
 
 const Counter: FC = () => {
-  // web3 hooks
   const chainId = useChainId()
 
   if (chainId !== ChainId.Rinkeby) {
