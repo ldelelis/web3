@@ -20,13 +20,11 @@ async function main() {
   const wavesCount = await waveContract.getWavesCount()
   console.log("waveCount", wavesCount.toNumber())
 
-  const waveTxn = await waveContract.wave("A message")
-  await waveTxn.wait()
+  const waveTxOne = await waveContract.connect(randomPerson).wave("Wave #1")
+  await waveTxOne.wait()
 
-  const randomWaveTx = await waveContract
-    .connect(randomPerson)
-    .wave("Random message")
-  await randomWaveTx.wait()
+  const waveTxTwo = await waveContract.connect(randomPerson).wave("Wave #2")
+  await waveTxTwo.wait()
 
   contractBalance = await ethers.provider.getBalance(waveContract.address)
   console.log("Contract balance: ", ethers.utils.formatEther(contractBalance))
