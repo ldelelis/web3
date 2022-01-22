@@ -27,7 +27,9 @@
     "ganache:start": "ganache-cli -d --db ganachedb",
     "geth:account": "geth --datadir=gethdb account new",
     "geth:start": "geth --datadir=gethdb --rpc --ws --dev --dev.period=2",
-    "hardhat:deploy:wave": "hardhat run scripts/deploy.ts --network rinkeby"
+    "hardhat:run": "hardhat run scripts/run.ts",
+    "hardhat:deploy": "hardhat run scripts/deploy.ts --network rinkeby",
+    "hardhat:compile": "hardhat compile"
   },
   "dependencies": {
     "@ethersproject/abi": "^5.5.0",

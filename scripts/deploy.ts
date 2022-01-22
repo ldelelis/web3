@@ -1,17 +1,14 @@
 import { ethers } from "hardhat"
 
 async function main() {
-  const [deployer] = await ethers.getSigners()
-  const accountBalance = await deployer.getBalance()
+  const waveContractFactory = await ethers.getContractFactory("WavePortal")
+  const waveContract = await waveContractFactory.deploy({
+    value: ethers.utils.parseEther("0.001"),
+  })
 
-  console.log("Deploying contracts with account:", deployer.address)
-  console.log("Account balance: ", accountBalance.toString())
+  await waveContract.deployed()
 
-  const Token = await ethers.getContractFactory("WavePortal")
-  const portal = await Token.deploy()
-  await portal.deployed()
-
-  console.log("WavePortal address: ", portal.address)
+  console.log("Wave portal address =>", waveContract.address)
 }
 
 async function runMain() {
