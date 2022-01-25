@@ -4,7 +4,7 @@ import { getAbi } from "~/helpers"
 import { useMetamask, useSigner } from "~/hooks"
 import { RIKEBY_CONTRACT_ADDRESSES, WavePortalArtifact } from "~/constants"
 
-export function useWavePortalContract(): Contract | undefined {
+export function useWaveContract(): Contract | undefined {
   const metamask = useMetamask()
   const signer = useSigner()
 

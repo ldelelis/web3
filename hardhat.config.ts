@@ -27,6 +27,11 @@ const config: HardhatUserConfig = {
       url: process.env.RIN_RPC,
       accounts: [process.env.PRIVATE_KEY],
     },
+    mainnet: {
+      chainId: 1,
+      url: process.env.ETH_RPC,
+      accounts: [process.env.PRIVATE_KEY],
+    },
   },
 }
 

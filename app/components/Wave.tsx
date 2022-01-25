@@ -7,19 +7,19 @@ import { ChainId, Wave } from "~/types"
 import {
   useAccount,
   useChainId,
+  useWaveContract,
   useConnectMetamask,
-  useWavePortalContract,
 } from "~/hooks"
 
 export default function Wave(): ReactElement {
-  const [waves, setWaves] = useState<Wave[] | undefined>(undefined)
+  const [waves, setWaves] = useState<Wave[]>([])
   const [message, setMessage] = useState<string>("")
   const [wavesCount, setWavesCount] = useState<number>(0)
 
   const chainId = useChainId()
   const account = useAccount()
+  const waveContract = useWaveContract()
   const connectMetamask = useConnectMetamask()
-  const wavePortalContract = useWavePortalContract()
 
   async function handleConnectMetamaskClick(): Promise<void> {
     connectMetamask()
@@ -31,53 +31,89 @@ export default function Wave(): ReactElement {
     setMessage(message)
   }
 
-  async function getWavesCount(wavePortalContract: Contract): Promise<number> {
-    return wavePortalContract
+  async function getWavesCount(waveContract: Contract): Promise<number> {
+    return waveContract
       .getWavesCount()
       .then((bigWavesCount: BigNumber) => bigWavesCount.toNumber())
   }
 
-  async function getWaves(wavePortalContract: Contract): Promise<Wave[]> {
-    return wavePortalContract.getWaves()
+  async function getWaves(waveContract: Contract): Promise<Wave[]> {
+    return waveContract.getWaves()
   }
 
   useEffect(
     function getInitialWaves() {
-      if (!wavePortalContract) return
+      if (!waveContract) return
 
-      getWaves(wavePortalContract).then(setWaves)
+      getWaves(waveContract).then(setWaves)
     },
-    [wavePortalContract],
+    [waveContract],
+  )
+
+  useEffect(
+    function getInitialWaves() {
+      if (!waveContract) return
+
+      getWaves(waveContract).then(setWaves)
+    },
+    [waveContract],
   )
 
   useEffect(
     function getInitialWavesCount() {
-      if (!wavePortalContract) return
+      if (!waveContract) return
 
-      getWavesCount(wavePortalContract).then(setWavesCount)
+      getWavesCount(waveContract).then(setWavesCount)
     },
-    [wavePortalContract],
+    [waveContract],
   )
 
   async function handleWave(): Promise<void> {
     try {
       invariant(
-        wavePortalContract,
+        waveContract,
         "You must instance Wave Portal contract in order to wave",
       )
 
-      const waveTxn = await wavePortalContract.wave(message)
+      const waveTxn = await waveContract.wave(message, {
+        gasLimit: 300000,
+      })
       console.log("Mining =>", waveTxn.hash)
 
       await waveTxn.wait()
       console.log("Mined => ", waveTxn.hash)
 
-      getWavesCount(wavePortalContract).then(setWavesCount)
-      getWaves(wavePortalContract).then(setWaves)
+      getWavesCount(waveContract).then(setWavesCount)
+      getWaves(waveContract).then(setWaves)
     } catch (error) {
       console.log(error)
     }
   }
+
+  useEffect(
+    function handleNewWaveEvent() {
+      if (!waveContract) return
+
+      function handleNewWave(from: string, timestamp: number, message: string) {
+        console.log("handleNewWave ~ from =>", from)
+        console.log("handleNewWave ~ message =>", message)
+        console.log("handleNewWave ~ timestamp =>", timestamp)
+        setWaves((prevWaves) => [
+          ...prevWaves,
+          { waver: from, timestamp, message },
+        ])
+      }
+
+      waveContract.on("NewWave", handleNewWave)
+
+      return () => {
+        waveContract.off("NewWave", () => {
+          console.warn(`Unsubscribed from "Increased" Counter contract's event`)
+        })
+      }
+    },
+    [waveContract],
+  )
 
   if (chainId !== ChainId.Rinkeby) {
     return (
@@ -131,14 +167,14 @@ export default function Wave(): ReactElement {
         </div>
         <section className="flex flex-col w-full space-y-2">
           {waves
-            ? waves.map(({ message, waver }) => (
+            ? waves.map(({ message, waver }, index) => (
                 <article
-                  key={`wave_card_${waver}_${message.slice(0, 10)}`}
+                  key={`wave_card_${waver}_${message.slice(0, 10)}_${index}`}
                   className="p-2 bg-red-300"
                 >
-                  <text>
+                  <p>
                     Waver {waver} said: {message}
-                  </text>
+                  </p>
                 </article>
               ))
             : null}
