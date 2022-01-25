@@ -95,9 +95,6 @@ export default function Wave(): ReactElement {
       if (!waveContract) return
 
       function handleNewWave(from: string, timestamp: number, message: string) {
-        console.log("handleNewWave ~ from =>", from)
-        console.log("handleNewWave ~ message =>", message)
-        console.log("handleNewWave ~ timestamp =>", timestamp)
         setWaves((prevWaves) => [
           ...prevWaves,
           { waver: from, timestamp, message },
