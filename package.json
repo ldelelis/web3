@@ -35,6 +35,7 @@
     "@ethersproject/abi": "^5.5.0",
     "@ethersproject/bignumber": "^5.5.0",
     "@ethersproject/providers": "^5.5.2",
+    "@openzeppelin/contracts": "^4.4.2",
     "@remix-run/cloudflare-workers": "^1.1.1",
     "@remix-run/react": "^1.1.1",
     "react": "^17.0.2",
