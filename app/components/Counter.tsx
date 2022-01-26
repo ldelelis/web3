@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react"
+import { ReactElement, useEffect, useState } from "react"
 
 import { BigNumber } from "@ethersproject/bignumber"
 import { Contract } from "@ethersproject/contracts"
@@ -6,7 +6,23 @@ import { Contract } from "@ethersproject/contracts"
 import { ChainId } from "~/types"
 import { useAccount, useChainId, useCounterContract } from "~/hooks"
 
-const Information: FC = () => {
+export function Counter(): ReactElement {
+  const chainId = useChainId()
+
+  const isRinkeby = chainId !== ChainId.Rinkeby
+
+  if (!isRinkeby) {
+    return (
+      <div>
+        <h3>This section works on Rinkeby. Try changing to it from Metamask</h3>
+      </div>
+    )
+  }
+
+  return <Information />
+}
+
+function Information(): ReactElement {
   const [counter, setCounter] = useState<undefined | number>(undefined)
 
   const account = useAccount()
@@ -64,19 +80,3 @@ const Information: FC = () => {
     </div>
   )
 }
-
-const Counter: FC = () => {
-  const chainId = useChainId()
-
-  if (chainId !== ChainId.Rinkeby) {
-    return (
-      <div>
-        <h3>This section works on Rinkeby. Try changing to it from Metamask</h3>
-      </div>
-    )
-  }
-
-  return <Information />
-}
-
-export default Counter

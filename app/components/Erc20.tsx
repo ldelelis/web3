@@ -1,78 +1,121 @@
-import React, { FC, ReactElement } from "react"
+import { useState, ReactElement, useEffect } from "react"
+import { Contract } from "@ethersproject/contracts"
+import { BigNumber } from "@ethersproject/bignumber"
 
 import { ChainId } from "~/types"
-
-import { useChainId } from "~/hooks"
+import { bigNumberToString } from "~/helpers"
+import {
+  useChainId,
+  useAccount,
+  useErc20Contract,
+  useConnectMetamask,
+} from "~/hooks"
 
 export default function Erc20(): ReactElement {
+  const account = useAccount()
   const chainId = useChainId()
+  const erc20Contract = useErc20Contract()
+  const connectMetamask = useConnectMetamask()
 
-  if (chainId !== ChainId.Rinkeby) {
+  const isMainnet = chainId === ChainId.Mainnet
+
+  async function handleConnectMetamaskClick(): Promise<void> {
+    connectMetamask()
+  }
+
+  if (!account || !erc20Contract) {
     return (
-      <div>
-        <h3>This section works on Rinkeby. Try changing to it from Metamask</h3>
+      <div className="flex justify-end items-center w-full space-x-2">
+        <h3>You need to connect your Metamask</h3>
+        <button
+          className="p-2 bg-indigo-500 rounded-sm text-white"
+          onClick={handleConnectMetamaskClick}
+        >
+          Connect wallet
+        </button>
       </div>
     )
   }
 
-  return <Information />
+  if (!isMainnet) {
+    return (
+      <div>
+        <h3>This section works on Mainnet. Try changing to it from Metamask</h3>
+      </div>
+    )
+  }
+
+  return <Information erc20Contract={erc20Contract} />
 }
 
-const Information: FC = () => {
-  // const [_decimals, _totalSupply, _name, _symbol] =
-  //   useContractCalls([
-  //     {
-  //       abi: ERC20Interface,
-  //       address: ERC20_ADDRESS,
-  //       method: "decimals",
-  //       args: [],
-  //     },
-  //     {
-  //       abi: ERC20Interface,
-  //       address: ERC20_ADDRESS,
-  //       method: "totalSupply",
-  //       args: [],
-  //     },
-  //     {
-  //       abi: ERC20Interface,
-  //       address: ERC20_ADDRESS,
-  //       method: "name",
-  //       args: [],
-  //     },
-  //     {
-  //       abi: ERC20Interface,
-  //       address: ERC20_ADDRESS,
-  //       method: "symbol",
-  //       args: [],
-  //     },
-  //   ]) ?? []
+function Information({
+  erc20Contract,
+}: {
+  erc20Contract: Contract
+}): ReactElement {
+  const [name, setName] = useState<string | undefined>(undefined)
+  const [symbol, setSymbol] = useState<string | undefined>(undefined)
+  const [decimals, setDecimals] = useState<number | undefined>(undefined)
+  const [totalSupply, setTotalSupply] = useState<BigNumber | undefined>(
+    undefined,
+  )
 
-  // if (!_decimals || !_symbol || !_name || !_totalSupply) {
-  //   return (
-  //     <div className={styles.section}>
-  //       <span>Calling contract</span>
-  //     </div>
-  //   )
-  // }
+  const isLoading = !name || !symbol || !decimals || !totalSupply
 
-  // const [decimals] = _decimals
-  // const [totalSupply] = _totalSupply
-  // const [name] = _name
-  // const [symbol] = _symbol
+  useEffect(
+    function getInformation() {
+      async function call() {
+        const [name, symbol, decimals, totalSupply] = await Promise.all([
+          erc20Contract.name(),
+          erc20Contract.symbol(),
+          erc20Contract.decimals(),
+          erc20Contract.totalSupply(),
+        ])
 
-  // const bigDecimals = BigNumber.from(decimals)
-  // const bigTotalSupply = BigNumber.from(totalSupply)
-  // const tokens = bigTotalSupply.div(bigDecimals)
-  // const totalSupplyLabel = tokens.toString()
+        setName(name)
+        setSymbol(symbol)
+        setDecimals(decimals)
+        setTotalSupply(totalSupply)
+      }
+
+      call()
+    },
+    [erc20Contract],
+  )
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <p>Gathering information...</p>
+      </div>
+    )
+  }
+
+  const totalSupplyLabel = bigNumberToString(totalSupply, decimals)
 
   return (
-    // <div className={styles.section}>
-    //   <span>This token has {name} as it&apos;s name</span>
-    //   <span>This token has {symbol} as it&apos;s symbol</span>
-    //   <span>This token has {decimals} decimals</span>
-    //   <span>This token has {totalSupplyLabel} tokens</span>
-    // </div>
-    <h3>Erc20</h3>
+    <div className="flex flex-col items-center justify-center">
+      <p>
+        This token has{" "}
+        <span className="underline underline-offset-2">{name}</span> as
+        it&apos;s name
+      </p>
+      <p>
+        This token has{" "}
+        <span className="underline underline-offset-2">{symbol}</span> as
+        it&apos;s symbol
+      </p>
+      <p>
+        This token has{" "}
+        <span className="underline underline-offset-2">{decimals}</span>{" "}
+        decimals
+      </p>
+      <p>
+        This token has{" "}
+        <span className="underline underline-offset-2">{totalSupplyLabel}</span>{" "}
+        tokens
+      </p>
+    </div>
   )
 }
 
@@ -90,9 +133,9 @@ const Information: FC = () => {
 
 // const Transfers: FC<TransfersProps> = ({ library, blockNumber }) => {
 //   // custom hooks
-//   const contract = useContractInstance({ abi, address, library })
-//   const events = useContractEvents({ contract, event: "Transfer" })
-//   console.log("contract", contract)
+//   const erc20Contract = useContractInstance({ abi, address, library })
+//   const events = useContractEvents({ erc20Contract, event: "Transfer" })
+//   console.log("erc20Contract", contract)
 
 //   return (
 //     <div>

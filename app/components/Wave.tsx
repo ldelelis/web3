@@ -1,4 +1,4 @@
-import React, { ChangeEvent, ReactElement, useEffect, useState } from "react"
+import { ChangeEvent, ReactElement, useEffect, useState } from "react"
 import invariant from "tiny-invariant"
 import { Contract } from "@ethersproject/contracts"
 import { BigNumber } from "@ethersproject/bignumber"
@@ -20,6 +20,8 @@ export default function Wave(): ReactElement {
   const account = useAccount()
   const waveContract = useWaveContract()
   const connectMetamask = useConnectMetamask()
+
+  const isRinkeby = chainId === ChainId.Rinkeby
 
   async function handleConnectMetamaskClick(): Promise<void> {
     connectMetamask()
@@ -112,7 +114,7 @@ export default function Wave(): ReactElement {
     [waveContract],
   )
 
-  if (chainId !== ChainId.Rinkeby) {
+  if (!isRinkeby) {
     return (
       <div>
         <h3>This section works on Rinkeby. Try changing to it from Metamask</h3>
