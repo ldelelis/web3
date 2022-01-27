@@ -150,7 +150,7 @@ function Transfers({
   erc20Contract: Contract
 }): ReactElement {
   const TRANSFER_BLOCKS_AMOUNT = 3000
-  const TRANSFER_CONFIRMATIONS = 2000
+  const TRANSFER_CONFIRMATIONS = 20
 
   const [transfers, setTransfers] = useState<Event[]>([])
 
