@@ -5,7 +5,6 @@ import { useMetamask } from "~/hooks"
 
 export function useAccount(): string | undefined {
   const [account, setAccount] = useState<undefined | string>(undefined)
-
   const metamask = useMetamask()
 
   useEffect(() => {

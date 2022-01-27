@@ -5,8 +5,8 @@ import { useMetamask, useSigner } from "~/hooks"
 import { RIKEBY_CONTRACT_ADDRESSES, WavePortalArtifact } from "~/constants"
 
 export function useWaveContract(): Contract | undefined {
-  const metamask = useMetamask()
   const signer = useSigner()
+  const metamask = useMetamask()
 
   if (!metamask || !signer) return undefined
 

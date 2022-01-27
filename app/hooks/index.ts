@@ -1,4 +1,5 @@
 export { useSigner } from "./useSigner"
+export { useAlchemy } from "./useAlchemy"
 export { useAccount } from "./useAccount"
 export { useChainId } from "./useChainId"
 export { useMetamask } from "./useMetamask"

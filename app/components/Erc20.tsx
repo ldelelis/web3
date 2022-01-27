@@ -14,14 +14,13 @@ import {
   useConnectMetamask,
 } from "~/hooks"
 
-const TRANFERS_BLOCKS_AMOUNT = 3000
-
 export default function Erc20(): ReactElement {
   const account = useAccount()
   const chainId = useChainId()
   const blockNumber = useBlockNumber()
   const erc20Contract = useErc20Contract()
   const connectMetamask = useConnectMetamask()
+
   const isMainnet = chainId === ChainId.Mainnet
 
   async function handleConnectMetamaskClick(): Promise<void> {
@@ -150,6 +149,9 @@ function Transfers({
   blockNumber: number
   erc20Contract: Contract
 }): ReactElement {
+  const TRANSFER_BLOCKS_AMOUNT = 3000
+  const TRANSFER_CONFIRMATIONS = 2000
+
   const [transfers, setTransfers] = useState<Event[]>([])
 
   useEffect(
@@ -158,7 +160,7 @@ function Transfers({
         const transfersFilter = erc20Contract.filters.Transfer()
         const transfers = await erc20Contract.queryFilter(
           transfersFilter,
-          blockNumber - TRANFERS_BLOCKS_AMOUNT,
+          blockNumber - TRANSFER_BLOCKS_AMOUNT,
           blockNumber,
         )
 
@@ -170,9 +172,30 @@ function Transfers({
     [blockNumber, erc20Contract],
   )
 
+  useEffect(
+    function handleTransferEvent() {
+      if (!erc20Contract) return
+
+      erc20Contract.on("Transfer", (transfer) => {
+        setTransfers((prevTransfers) => [...prevTransfers, transfer])
+      })
+
+      return () => {
+        erc20Contract.off("Transfer", () => {
+          console.warn(`Unsubscribed from "Transfer" Erc20 contract's event`)
+        })
+      }
+    },
+    [erc20Contract],
+  )
+
+  function byConfirmedEvent(transfer: Event) {
+    return blockNumber - transfer.blockNumber > TRANSFER_CONFIRMATIONS
+  }
+
   return (
     <ul className="flex flex-col items-center justify-center">
-      {transfers?.map(({ args, transactionHash }) => {
+      {transfers.filter(byConfirmedEvent).map(({ args, transactionHash }) => {
         invariant(args, "Transfer events should include arguments")
 
         const url = ETHERSCAN_URL + transactionHash

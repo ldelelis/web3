@@ -5,7 +5,6 @@ import { useMetamask } from "~/hooks"
 
 export function useChainId(): number | undefined {
   const [chainId, setChainId] = useState<undefined | number>(undefined)
-
   const metamask = useMetamask()
 
   useEffect(() => {

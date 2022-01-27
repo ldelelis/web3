@@ -1,24 +1,40 @@
 import { useEffect, useState } from "react"
-import { Web3Provider } from "@ethersproject/providers"
 
-import { useMetamask } from "~/hooks"
+import { useAlchemy } from "~/hooks"
 
 export function useBlockNumber(): number | undefined {
   const [blockNumber, setBlockNumber] = useState<undefined | number>(undefined)
+  const alchemy = useAlchemy()
 
-  const metamask = useMetamask()
+  useEffect(
+    function getInitialBlockNumber() {
+      async function call() {
+        const blockNumber = await alchemy.getBlockNumber()
 
-  useEffect(() => {
-    if (!metamask) return
+        setBlockNumber(blockNumber)
+      }
 
-    async function getBlockNumber(metamask: Web3Provider) {
-      const blockNumber = await metamask.getBlockNumber()
+      call()
+    },
+    [alchemy],
+  )
 
-      setBlockNumber(blockNumber)
-    }
+  useEffect(
+    function listenBlockEvent() {
+      function handleBlockNumber(blockNumber: number) {
+        setBlockNumber(blockNumber)
+      }
 
-    getBlockNumber(metamask)
-  }, [metamask])
+      alchemy.on("block", handleBlockNumber)
+
+      return () => {
+        alchemy.off("block", () => {
+          console.warn(`Unsubscribed from "block" Web3Provider event`)
+        })
+      }
+    },
+    [alchemy],
+  )
 
   return blockNumber
 }
