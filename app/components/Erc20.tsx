@@ -1,29 +1,34 @@
 import { useState, ReactElement, useEffect } from "react"
-import { Contract } from "@ethersproject/contracts"
+import { Contract, Event } from "@ethersproject/contracts"
 import { BigNumber } from "@ethersproject/bignumber"
+import invariant from "tiny-invariant"
 
 import { ChainId } from "~/types"
+import { ETHERSCAN_URL } from "~/constants"
 import { bigNumberToString } from "~/helpers"
 import {
   useChainId,
   useAccount,
+  useBlockNumber,
   useErc20Contract,
   useConnectMetamask,
 } from "~/hooks"
 
+const TRANFERS_BLOCKS_AMOUNT = 3000
+
 export default function Erc20(): ReactElement {
   const account = useAccount()
   const chainId = useChainId()
+  const blockNumber = useBlockNumber()
   const erc20Contract = useErc20Contract()
   const connectMetamask = useConnectMetamask()
-
   const isMainnet = chainId === ChainId.Mainnet
 
   async function handleConnectMetamaskClick(): Promise<void> {
     connectMetamask()
   }
 
-  if (!account || !erc20Contract) {
+  if (!account || !erc20Contract || !blockNumber) {
     return (
       <div className="flex justify-end items-center w-full space-x-2">
         <h3>You need to connect your Metamask</h3>
@@ -45,12 +50,14 @@ export default function Erc20(): ReactElement {
     )
   }
 
-  return <Information erc20Contract={erc20Contract} />
+  return <Information blockNumber={blockNumber} erc20Contract={erc20Contract} />
 }
 
 function Information({
+  blockNumber,
   erc20Contract,
 }: {
+  blockNumber: number
   erc20Contract: Contract
 }): ReactElement {
   const [name, setName] = useState<string | undefined>(undefined)
@@ -94,54 +101,95 @@ function Information({
   const totalSupplyLabel = bigNumberToString(totalSupply, decimals)
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <p>
-        This token has{" "}
-        <span className="underline underline-offset-2">{name}</span> as
-        it&apos;s name
-      </p>
-      <p>
-        This token has{" "}
-        <span className="underline underline-offset-2">{symbol}</span> as
-        it&apos;s symbol
-      </p>
-      <p>
-        This token has{" "}
-        <span className="underline underline-offset-2">{decimals}</span>{" "}
-        decimals
-      </p>
-      <p>
-        This token has{" "}
-        <span className="underline underline-offset-2">{totalSupplyLabel}</span>{" "}
-        tokens
-      </p>
+    <div className="flex flex-col items-center justify-center space-y-4">
+      <div className="flex flex-col items-center justify-center">
+        <p>
+          This token has{" "}
+          <span className="underline underline-offset-2">{name}</span> as
+          it&apos;s name
+        </p>
+        <p>
+          This token has{" "}
+          <span className="underline underline-offset-2">{symbol}</span> as
+          it&apos;s symbol
+        </p>
+        <p>
+          This token has{" "}
+          <span className="underline underline-offset-2">{decimals}</span>{" "}
+          decimals
+        </p>
+        <p>
+          This token has{" "}
+          <span className="underline underline-offset-2">
+            {totalSupplyLabel}
+          </span>{" "}
+          tokens
+        </p>
+      </div>
+      <div className="flex flex-col items-center justify-center">
+        <h3>Transfers</h3>
+        <Transfers
+          blockNumber={blockNumber}
+          decimals={decimals}
+          erc20Contract={erc20Contract}
+          symbol={symbol}
+        />
+      </div>
     </div>
   )
 }
 
-// constants
-// const EVENT = "Transfer"
-// const BLOCKS_AMOUNT = 100
+function Transfers({
+  symbol,
+  decimals,
+  blockNumber,
+  erc20Contract,
+}: {
+  symbol: string
+  decimals: number
+  blockNumber: number
+  erc20Contract: Contract
+}): ReactElement {
+  const [transfers, setTransfers] = useState<Event[]>([])
 
-// const abi = ERC20Interface
-// const address = ERC20_ADDRESS
+  useEffect(
+    function getPastTransfers() {
+      async function call() {
+        const transfersFilter = erc20Contract.filters.Transfer()
+        const transfers = await erc20Contract.queryFilter(
+          transfersFilter,
+          blockNumber - TRANFERS_BLOCKS_AMOUNT,
+          blockNumber,
+        )
 
-// type TransfersProps = {
-//   library: Web3Provider
-//   blockNumber: number
-// }
+        setTransfers(transfers)
+      }
 
-// const Transfers: FC<TransfersProps> = ({ library, blockNumber }) => {
-//   // custom hooks
-//   const erc20Contract = useContractInstance({ abi, address, library })
-//   const events = useContractEvents({ erc20Contract, event: "Transfer" })
-//   console.log("erc20Contract", contract)
+      call()
+    },
+    [blockNumber, erc20Contract],
+  )
 
-//   return (
-//     <div>
-//       {events?.map((event) => (
-//         <span key={11}>hola</span>
-//       ))}
-//     </div>
-//   )
-// }
+  return (
+    <ul className="flex flex-col items-center justify-center">
+      {transfers?.map(({ args, transactionHash }) => {
+        invariant(args, "Transfer events should include arguments")
+
+        const url = ETHERSCAN_URL + transactionHash
+
+        const { from, to, value: bigAmount } = args
+        const amount = bigNumberToString(bigAmount, decimals)
+
+        return (
+          <a
+            key={transactionHash}
+            className="hover:underline underline-offset-2"
+            href={url}
+          >
+            {from} to {to} for {amount} {symbol}
+          </a>
+        )
+      })}
+    </ul>
+  )
+}

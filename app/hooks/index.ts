@@ -2,6 +2,7 @@ export { useSigner } from "./useSigner"
 export { useAccount } from "./useAccount"
 export { useChainId } from "./useChainId"
 export { useMetamask } from "./useMetamask"
+export { useBlockNumber } from "./useBlockNumber"
 export { useConnectMetamask } from "./useConnectMetamask"
 
 export { useWaveContract } from "./contracts/useWaveContract"
