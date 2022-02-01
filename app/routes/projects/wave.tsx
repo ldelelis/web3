@@ -7,6 +7,7 @@ import { ChainId, Wave } from "~/types"
 import {
   useAccount,
   useChainId,
+  useMetamask,
   useWaveContract,
   useConnectMetamask,
 } from "~/hooks"
@@ -16,8 +17,9 @@ export default function Wave(): ReactElement {
   const [message, setMessage] = useState<string>("")
   const [wavesCount, setWavesCount] = useState<number>(0)
 
-  const chainId = useChainId()
-  const account = useAccount()
+  const metamask = useMetamask()
+  const chainId = useChainId({ metamask })
+  const account = useAccount({ metamask })
   const waveContract = useWaveContract()
   const connectMetamask = useConnectMetamask()
 

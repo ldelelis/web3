@@ -19,22 +19,23 @@ export function useBlockNumber(): number | undefined {
     [alchemy],
   )
 
-  useEffect(
-    function listenBlockEvent() {
-      function handleBlockNumber(blockNumber: number) {
-        setBlockNumber(blockNumber)
-      }
+  // TODO: listen to "block" event
+  // useEffect(
+  //   function listenBlockEvent() {
+  //     function handleBlockNumber(blockNumber: number) {
+  //       setBlockNumber(blockNumber)
+  //     }
 
-      alchemy.on("block", handleBlockNumber)
+  //     alchemy.on("block", handleBlockNumber)
 
-      return () => {
-        alchemy.off("block", () => {
-          console.warn(`Unsubscribed from "block" Web3Provider event`)
-        })
-      }
-    },
-    [alchemy],
-  )
+  //     return () => {
+  //       alchemy.off("block", () => {
+  //         console.warn(`Unsubscribed from "block" Web3Provider event`)
+  //       })
+  //     }
+  //   },
+  //   [alchemy],
+  // )
 
   return blockNumber
 }

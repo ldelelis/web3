@@ -1,28 +1,51 @@
 import { useEffect, useState } from "react"
 import { Web3Provider } from "@ethersproject/providers"
 
-import { useMetamask } from "~/hooks"
-
-export function useChainId(): number | undefined {
+export function useChainId({
+  metamask,
+}: {
+  metamask?: Web3Provider
+}): number | undefined {
   const [chainId, setChainId] = useState<undefined | number>(undefined)
-  const metamask = useMetamask()
+
+  function hexToNumber(hexChainId: string): number {
+    return Number(hexChainId.slice(2))
+  }
 
   useEffect(() => {
     if (!metamask) return
 
-    function hexToNumber(hexChainId: string): number {
-      return Number(hexChainId.slice(2))
-    }
-
-    async function getAccount(metamask: Web3Provider) {
+    async function getChainId(metamask: Web3Provider) {
       const hexChainId = await metamask.send("eth_chainId", [])
       const chainId = hexToNumber(hexChainId)
 
       setChainId(chainId)
     }
 
-    getAccount(metamask)
+    getChainId(metamask)
   }, [metamask])
+
+  // TODO: listen to "chainChanged" event
+  // useEffect(
+  //   function listenChainChangeEvent() {
+  //     if (!metamask) return
+
+  //     function handleChainChange(hexChainId: string) {
+  //       const chainId = hexToNumber(hexChainId)
+
+  //       setChainId(chainId)
+  //     }
+
+  //     metamask.on("chainChanged", handleChainChange)
+
+  //     return () => {
+  //       metamask.removeListener("chainChanged", () => {
+  //         console.warn(`Unsubscribed from "chainChanged" Metamask's event`)
+  //       })
+  //     }
+  //   },
+  //   [metamask],
+  // )
 
   return chainId
 }

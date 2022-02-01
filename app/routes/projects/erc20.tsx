@@ -9,14 +9,17 @@ import { bigNumberToString } from "~/helpers"
 import {
   useChainId,
   useAccount,
+  useMetamask,
   useBlockNumber,
   useErc20Contract,
   useConnectMetamask,
 } from "~/hooks"
 
 export default function Erc20(): ReactElement {
-  const account = useAccount()
-  const chainId = useChainId()
+  const metamask = useMetamask()
+
+  const account = useAccount({ metamask })
+  const chainId = useChainId({ metamask })
   const blockNumber = useBlockNumber()
   const erc20Contract = useErc20Contract()
   const connectMetamask = useConnectMetamask()
@@ -203,9 +206,11 @@ function Transfers({
         const { from, to, value: bigAmount } = args
         const amount = bigNumberToString(bigAmount, decimals)
 
+        const key = `${from}_${to}_${amount}_${transactionHash}`
+
         return (
           <a
-            key={transactionHash}
+            key={key}
             className="hover:underline underline-offset-2"
             href={url}
           >

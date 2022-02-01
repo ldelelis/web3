@@ -1,13 +1,21 @@
 import { ReactElement, useEffect, useState } from "react"
 
-import { BigNumber } from "@ethersproject/bignumber"
 import { Contract } from "@ethersproject/contracts"
+import { BigNumber } from "@ethersproject/bignumber"
+import { Web3Provider } from "@ethersproject/providers"
 
 import { ChainId } from "~/types"
-import { useAccount, useChainId, useCounterContract } from "~/hooks"
+import {
+  useAccount,
+  useChainId,
+  useMetamask,
+  useCounterContract,
+} from "~/hooks"
 
 export function Counter(): ReactElement {
-  const chainId = useChainId()
+  const metamask = useMetamask()
+
+  const chainId = useChainId({ metamask })
 
   const isRinkeby = chainId !== ChainId.Rinkeby
 
@@ -19,13 +27,13 @@ export function Counter(): ReactElement {
     )
   }
 
-  return <Information />
+  return <Information metamask={metamask} />
 }
 
-function Information(): ReactElement {
+function Information({ metamask }: { metamask?: Web3Provider }): ReactElement {
   const [counter, setCounter] = useState<undefined | number>(undefined)
 
-  const account = useAccount()
+  const account = useAccount({ metamask })
   const counterContract = useCounterContract()
 
   function bigToString(bigNumber: BigNumber) {
