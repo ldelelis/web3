@@ -1,11 +1,17 @@
 import { ethers } from "hardhat"
 
 async function main() {
+  const [owner] = await ethers.getSigners()
   const erc721ContractFactory = await ethers.getContractFactory(
     "Erc721PayPerMint",
   )
 
-  const erc721Contract = await erc721ContractFactory.deploy()
+  const gasPrice = 1e9
+
+  const erc721Contract = await erc721ContractFactory.deploy({
+    from: owner.address,
+    gasPrice,
+  })
 
   await erc721Contract.deployed()
 

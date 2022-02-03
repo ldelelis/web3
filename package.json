@@ -27,7 +27,8 @@
     "hardhat:wave:run": "hardhat run scripts/wave/run.ts",
     "hardhat:wave:deploy": "hardhat run scripts/wave/deploy.ts --network rinkeby",
     "hardhat:greeter:run": "hardhat run scripts/greeter/run.ts",
-    "hardhat:greeter:deploy": "hardhat run scripts/greeter/deploy.ts --network rinkeby"
+    "hardhat:greeter:deploy": "hardhat run scripts/greeter/deploy.ts --network rinkeby",
+    "hardhat:erc721:deploy": "hardhat run scripts/greeter/deploy.ts --network localhost"
   },
   "dependencies": {
     "@ethersproject/abi": "^5.5.0",
