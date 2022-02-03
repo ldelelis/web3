@@ -15,6 +15,9 @@ export default function Index(): ReactElement {
           <Link className="hover:underline underline-offset-2" to="erc20">
             Erc20
           </Link>
+          <Link className="hover:underline underline-offset-2" to="erc721">
+            Erc721
+          </Link>
         </ul>
       </nav>
       <div className="flex items-center justify-center flex-1 w-full">

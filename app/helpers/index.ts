@@ -1,4 +1,5 @@
 export * from "./array"
+export * from "./block"
 export * from "./provider"
 export * from "./artifact"
 export * from "./bignumber"

@@ -8,4 +8,5 @@ export { useConnectMetamask } from "./useConnectMetamask"
 
 export { useWaveContract } from "./contracts/useWaveContract"
 export { useErc20Contract } from "./contracts/useErc20Contract"
+export { useErc721Contract } from "./contracts/useErc721Contract"
 export { useCounterContract } from "./contracts/useCounterContract"
