@@ -17,8 +17,8 @@ import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
-export interface VEGTokenInterface extends utils.Interface {
-  contractName: "VEGToken";
+export interface TransfersInterface extends utils.Interface {
+  contractName: "Transfers";
   functions: {
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
@@ -113,13 +113,13 @@ export type TransferEvent = TypedEvent<
 
 export type TransferEventFilter = TypedEventFilter<TransferEvent>;
 
-export interface VEGToken extends BaseContract {
-  contractName: "VEGToken";
+export interface Transfers extends BaseContract {
+  contractName: "Transfers";
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: VEGTokenInterface;
+  interface: TransfersInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

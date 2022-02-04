@@ -57,21 +57,21 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Counter__factory>;
     getContractFactory(
-      name: "VEGToken",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.VEGToken__factory>;
-    getContractFactory(
-      name: "Erc721PayPerMint",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Erc721PayPerMint__factory>;
-    getContractFactory(
       name: "Greeter",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Greeter__factory>;
     getContractFactory(
-      name: "WavePortal",
+      name: "Mint",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.WavePortal__factory>;
+    ): Promise<Contracts.Mint__factory>;
+    getContractFactory(
+      name: "Transfers",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Transfers__factory>;
+    getContractFactory(
+      name: "Waver",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Waver__factory>;
 
     getContractAt(
       name: "Ownable",
@@ -129,25 +129,25 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Counter>;
     getContractAt(
-      name: "VEGToken",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.VEGToken>;
-    getContractAt(
-      name: "Erc721PayPerMint",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Erc721PayPerMint>;
-    getContractAt(
       name: "Greeter",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Greeter>;
     getContractAt(
-      name: "WavePortal",
+      name: "Mint",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.WavePortal>;
+    ): Promise<Contracts.Mint>;
+    getContractAt(
+      name: "Transfers",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Transfers>;
+    getContractAt(
+      name: "Waver",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Waver>;
 
     // default types
     getContractFactory(

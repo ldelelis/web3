@@ -9,8 +9,8 @@ export default function Index(): ReactElement {
           <Link className="hover:underline underline-offset-2" to="counter">
             Counter
           </Link>
-          <Link className="hover:underline underline-offset-2" to="wave">
-            Wave
+          <Link className="hover:underline underline-offset-2" to="waver">
+            Waver
           </Link>
           <Link className="hover:underline underline-offset-2" to="erc20">
             Erc20

@@ -1,6 +1,1 @@
-export type {
-  Greeter,
-  VEGToken,
-  WavePortal,
-  Erc721PayPerMint,
-} from "../../typechain-types"
+export type { Transfers, Mint, Counter, Greeter, Waver } from "typechain-types"

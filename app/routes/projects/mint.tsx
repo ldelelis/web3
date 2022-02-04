@@ -1,22 +1,22 @@
 import { ReactElement } from "react"
 
-import { ChainId, Erc721PayPerMint } from "~/types"
+import { ChainId, Mint as MintContract } from "~/types"
 import {
   useChainId,
   useAccount,
   useMetamask,
   useBlockNumber,
-  useErc721Contract,
+  useMintContract,
   useConnectMetamask,
 } from "~/hooks"
 
-export default function Erc721(): ReactElement {
+export default function Mint(): ReactElement {
   const metamask = useMetamask()
 
   const account = useAccount({ metamask })
   const chainId = useChainId({ metamask })
   const blockNumber = useBlockNumber()
-  const erc721Contract = useErc721Contract()
+  const mintContract = useMintContract()
   const connectMetamask = useConnectMetamask()
 
   const isLocalhost = chainId === ChainId.Localhost
@@ -25,7 +25,7 @@ export default function Erc721(): ReactElement {
     connectMetamask()
   }
 
-  if (!account || !erc721Contract || !blockNumber) {
+  if (!account || !mintContract || !blockNumber) {
     return (
       <div className="flex justify-end items-center w-full space-x-2">
         <h3>You need to connect your Metamask</h3>
@@ -50,20 +50,20 @@ export default function Erc721(): ReactElement {
     )
   }
 
-  return <Information erc721Contract={erc721Contract} owner={account} />
+  return <Information mintContract={mintContract} owner={account} />
 }
 
 function Information({
   owner,
-  erc721Contract,
+  mintContract,
 }: {
   owner: string
-  erc721Contract: Erc721PayPerMint
+  mintContract: MintContract
 }) {
   return (
     <div className="flex flex-col">
       <span>Owner: {owner}</span>
-      <span>Contract address: {erc721Contract.address}</span>
+      <span>Contract address: {mintContract.address}</span>
     </div>
   )
 }

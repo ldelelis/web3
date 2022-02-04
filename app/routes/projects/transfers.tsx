@@ -1,28 +1,28 @@
 import { useState, ReactElement, useEffect } from "react"
-import { Contract, Event } from "@ethersproject/contracts"
+import { Event } from "@ethersproject/contracts"
 import { BigNumber } from "@ethersproject/bignumber"
 import invariant from "tiny-invariant"
 
-import { ChainId } from "~/types"
 import { ETHERSCAN_URL } from "~/constants"
+import { ChainId, Transfers as TransfersContract } from "~/types"
 import { bigNumberToString } from "~/helpers"
 import {
   useChainId,
   useAccount,
   useMetamask,
   useBlockNumber,
-  useErc20Contract,
   useConnectMetamask,
+  useTransfersContract,
 } from "~/hooks"
 
-export default function Erc20(): ReactElement {
+export default function App(): ReactElement {
   const metamask = useMetamask()
 
   const account = useAccount({ metamask })
   const chainId = useChainId({ metamask })
   const blockNumber = useBlockNumber()
-  const erc20Contract = useErc20Contract()
   const connectMetamask = useConnectMetamask()
+  const transfersContract = useTransfersContract()
 
   const isMainnet = chainId === ChainId.Mainnet
 
@@ -30,7 +30,7 @@ export default function Erc20(): ReactElement {
     connectMetamask()
   }
 
-  if (!account || !erc20Contract || !blockNumber) {
+  if (!account || !transfersContract || !blockNumber) {
     return (
       <div className="flex justify-end items-center w-full space-x-2">
         <h3>You need to connect your Metamask</h3>
@@ -52,15 +52,20 @@ export default function Erc20(): ReactElement {
     )
   }
 
-  return <Information blockNumber={blockNumber} erc20Contract={erc20Contract} />
+  return (
+    <Information
+      blockNumber={blockNumber}
+      transfersContract={transfersContract}
+    />
+  )
 }
 
 function Information({
   blockNumber,
-  erc20Contract,
+  transfersContract,
 }: {
   blockNumber: number
-  erc20Contract: Contract
+  transfersContract: TransfersContract
 }): ReactElement {
   const [name, setName] = useState<string | undefined>(undefined)
   const [symbol, setSymbol] = useState<string | undefined>(undefined)
@@ -75,10 +80,10 @@ function Information({
     function getInformation() {
       async function call() {
         const [name, symbol, decimals, totalSupply] = await Promise.all([
-          erc20Contract.name(),
-          erc20Contract.symbol(),
-          erc20Contract.decimals(),
-          erc20Contract.totalSupply(),
+          transfersContract.name(),
+          transfersContract.symbol(),
+          transfersContract.decimals(),
+          transfersContract.totalSupply(),
         ])
 
         setName(name)
@@ -89,7 +94,7 @@ function Information({
 
       call()
     },
-    [erc20Contract],
+    [transfersContract],
   )
 
   if (isLoading) {
@@ -133,8 +138,8 @@ function Information({
         <Transfers
           blockNumber={blockNumber}
           decimals={decimals}
-          erc20Contract={erc20Contract}
           symbol={symbol}
+          transfersContract={transfersContract}
         />
       </div>
     </div>
@@ -145,12 +150,12 @@ function Transfers({
   symbol,
   decimals,
   blockNumber,
-  erc20Contract,
+  transfersContract,
 }: {
   symbol: string
   decimals: number
   blockNumber: number
-  erc20Contract: Contract
+  transfersContract: TransfersContract
 }): ReactElement {
   const TRANSFER_BLOCKS_AMOUNT = 3000
   const TRANSFER_CONFIRMATIONS = 20
@@ -160,8 +165,8 @@ function Transfers({
   useEffect(
     function getPastTransfers() {
       async function call() {
-        const transfersFilter = erc20Contract.filters.Transfer()
-        const transfers = await erc20Contract.queryFilter(
+        const transfersFilter = transfersContract.filters.Transfer()
+        const transfers = await transfersContract.queryFilter(
           transfersFilter,
           blockNumber - TRANSFER_BLOCKS_AMOUNT,
           blockNumber,
@@ -172,24 +177,26 @@ function Transfers({
 
       call()
     },
-    [blockNumber, erc20Contract],
+    [blockNumber, transfersContract],
   )
 
   useEffect(
     function handleTransferEvent() {
-      if (!erc20Contract) return
+      if (!transfersContract) return
 
-      erc20Contract.on("Transfer", (transfer) => {
+      transfersContract.on("Transfer", (transfer) => {
         setTransfers((prevTransfers) => [...prevTransfers, transfer])
       })
 
       return () => {
-        erc20Contract.off("Transfer", () => {
-          console.warn(`Unsubscribed from "Transfer" Erc20 contract's event`)
+        transfersContract.off("Transfer", () => {
+          console.warn(
+            `Unsubscribed from "Transfer" Transfers contract's event`,
+          )
         })
       }
     },
-    [erc20Contract],
+    [transfersContract],
   )
 
   function byConfirmedEvent(transfer: Event) {

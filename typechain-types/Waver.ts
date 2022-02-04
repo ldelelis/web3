@@ -17,7 +17,7 @@ import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
-export declare namespace WavePortal {
+export declare namespace Waver {
   export type WaveStruct = {
     waver: string;
     message: string;
@@ -31,8 +31,8 @@ export declare namespace WavePortal {
   };
 }
 
-export interface WavePortalInterface extends utils.Interface {
-  contractName: "WavePortal";
+export interface WaverInterface extends utils.Interface {
+  contractName: "Waver";
   functions: {
     "getWaves()": FunctionFragment;
     "getWavesCount()": FunctionFragment;
@@ -73,13 +73,13 @@ export type NewWaveEvent = TypedEvent<
 
 export type NewWaveEventFilter = TypedEventFilter<NewWaveEvent>;
 
-export interface WavePortal extends BaseContract {
-  contractName: "WavePortal";
+export interface Waver extends BaseContract {
+  contractName: "Waver";
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: WavePortalInterface;
+  interface: WaverInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -101,9 +101,7 @@ export interface WavePortal extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    getWaves(
-      overrides?: CallOverrides
-    ): Promise<[WavePortal.WaveStructOutput[]]>;
+    getWaves(overrides?: CallOverrides): Promise<[Waver.WaveStructOutput[]]>;
 
     getWavesCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -115,7 +113,7 @@ export interface WavePortal extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  getWaves(overrides?: CallOverrides): Promise<WavePortal.WaveStructOutput[]>;
+  getWaves(overrides?: CallOverrides): Promise<Waver.WaveStructOutput[]>;
 
   getWavesCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -127,7 +125,7 @@ export interface WavePortal extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    getWaves(overrides?: CallOverrides): Promise<WavePortal.WaveStructOutput[]>;
+    getWaves(overrides?: CallOverrides): Promise<Waver.WaveStructOutput[]>;
 
     getWavesCount(overrides?: CallOverrides): Promise<BigNumber>;
 

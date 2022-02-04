@@ -1,17 +1,15 @@
-import { Contract } from "@ethersproject/contracts"
+import { Counter__factory as counterFactory } from "typechain-types"
 
-import { getAbi } from "~/helpers"
+import { Counter } from "~/types"
 import { useMetamask, useSigner } from "~/hooks"
-import { RIKEBY_CONTRACT_ADDRESSES, CounterArtifact } from "~/constants"
+import { RIKEBY_CONTRACT_ADDRESSES } from "~/constants"
 
-export function useCounterContract(): Contract | undefined {
+export function useCounterContract(): Counter | undefined {
   const signer = useSigner()
   const metamask = useMetamask()
+  const address = RIKEBY_CONTRACT_ADDRESSES.counter
 
   if (!metamask || !signer) return undefined
 
-  const abi = getAbi(CounterArtifact)
-  const address = RIKEBY_CONTRACT_ADDRESSES.counter
-
-  return new Contract(address, abi, signer)
+  return counterFactory.connect(address, signer)
 }

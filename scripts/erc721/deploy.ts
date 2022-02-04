@@ -1,9 +1,7 @@
 import { ethers } from "hardhat"
 
 async function main() {
-  const erc721ContractFactory = await ethers.getContractFactory(
-    "Erc721PayPerMint",
-  )
+  const erc721ContractFactory = await ethers.getContractFactory("Erc721")
 
   const erc721Contract = await erc721ContractFactory.deploy()
 

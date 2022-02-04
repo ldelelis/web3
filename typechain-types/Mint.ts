@@ -18,8 +18,8 @@ import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
-export interface Erc721PayPerMintInterface extends utils.Interface {
-  contractName: "Erc721PayPerMint";
+export interface MintInterface extends utils.Interface {
+  contractName: "Mint";
   functions: {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
@@ -184,13 +184,13 @@ export type TransferEvent = TypedEvent<
 
 export type TransferEventFilter = TypedEventFilter<TransferEvent>;
 
-export interface Erc721PayPerMint extends BaseContract {
-  contractName: "Erc721PayPerMint";
+export interface Mint extends BaseContract {
+  contractName: "Mint";
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: Erc721PayPerMintInterface;
+  interface: MintInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

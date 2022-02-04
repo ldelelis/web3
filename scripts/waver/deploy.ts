@@ -1,7 +1,7 @@
 import { ethers } from "hardhat"
 
 async function main() {
-  const waveContractFactory = await ethers.getContractFactory("WavePortal")
+  const waveContractFactory = await ethers.getContractFactory("Waver")
   const waveContract = await waveContractFactory.deploy({
     value: ethers.utils.parseEther("0.001"),
   })

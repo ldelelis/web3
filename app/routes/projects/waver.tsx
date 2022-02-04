@@ -1,18 +1,17 @@
 import { ChangeEvent, ReactElement, useEffect, useState } from "react"
 import invariant from "tiny-invariant"
-import { Contract } from "@ethersproject/contracts"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { ChainId, Wave } from "~/types"
+import { ChainId, Wave, Waver as WaverContract } from "~/types"
 import {
   useAccount,
   useChainId,
   useMetamask,
-  useWaveContract,
+  useWaverContract,
   useConnectMetamask,
 } from "~/hooks"
 
-export default function Wave(): ReactElement {
+export default function Waver(): ReactElement {
   const [waves, setWaves] = useState<Wave[]>([])
   const [message, setMessage] = useState<string>("")
   const [wavesCount, setWavesCount] = useState<number>(0)
@@ -20,7 +19,7 @@ export default function Wave(): ReactElement {
   const metamask = useMetamask()
   const chainId = useChainId({ metamask })
   const account = useAccount({ metamask })
-  const waveContract = useWaveContract()
+  const waverContract = useWaverContract()
   const connectMetamask = useConnectMetamask()
 
   const isRinkeby = chainId === ChainId.Rinkeby
@@ -35,51 +34,51 @@ export default function Wave(): ReactElement {
     setMessage(message)
   }
 
-  async function getWavesCount(waveContract: Contract): Promise<number> {
-    return waveContract
+  async function getWavesCount(waverContract: WaverContract): Promise<number> {
+    return waverContract
       .getWavesCount()
       .then((bigWavesCount: BigNumber) => bigWavesCount.toNumber())
   }
 
-  async function getWaves(waveContract: Contract): Promise<Wave[]> {
-    return waveContract.getWaves()
+  async function getWaves(waverContract: WaverContract): Promise<Wave[]> {
+    return waverContract.getWaves()
   }
 
   useEffect(
     function getInitialWaves() {
-      if (!waveContract) return
+      if (!waverContract) return
 
-      getWaves(waveContract).then(setWaves)
+      getWaves(waverContract).then(setWaves)
     },
-    [waveContract],
+    [waverContract],
   )
 
   useEffect(
     function getInitialWaves() {
-      if (!waveContract) return
+      if (!waverContract) return
 
-      getWaves(waveContract).then(setWaves)
+      getWaves(waverContract).then(setWaves)
     },
-    [waveContract],
+    [waverContract],
   )
 
   useEffect(
     function getInitialWavesCount() {
-      if (!waveContract) return
+      if (!waverContract) return
 
-      getWavesCount(waveContract).then(setWavesCount)
+      getWavesCount(waverContract).then(setWavesCount)
     },
-    [waveContract],
+    [waverContract],
   )
 
   async function handleWave(): Promise<void> {
     try {
       invariant(
-        waveContract,
+        waverContract,
         "You must instance Wave Portal contract in order to wave",
       )
 
-      const waveTxn = await waveContract.wave(message, {
+      const waveTxn = await waverContract.wave(message, {
         gasLimit: 300000,
       })
       console.log("Mining =>", waveTxn.hash)
@@ -87,8 +86,8 @@ export default function Wave(): ReactElement {
       await waveTxn.wait()
       console.log("Mined => ", waveTxn.hash)
 
-      getWavesCount(waveContract).then(setWavesCount)
-      getWaves(waveContract).then(setWaves)
+      getWavesCount(waverContract).then(setWavesCount)
+      getWaves(waverContract).then(setWaves)
     } catch (error) {
       console.log(error)
     }
@@ -96,24 +95,28 @@ export default function Wave(): ReactElement {
 
   useEffect(
     function handleNewWaveEvent() {
-      if (!waveContract) return
+      if (!waverContract) return
 
-      function handleNewWave(from: string, timestamp: number, message: string) {
+      function handleNewWave(
+        from: string,
+        timestamp: BigNumber,
+        message: string,
+      ) {
         setWaves((prevWaves) => [
           ...prevWaves,
           { waver: from, timestamp, message },
         ])
       }
 
-      waveContract.on("NewWave", handleNewWave)
+      waverContract.on("NewWave", handleNewWave)
 
       return () => {
-        waveContract.off("NewWave", () => {
+        waverContract.off("NewWave", () => {
           console.warn(`Unsubscribed from "Increased" Counter contract's event`)
         })
       }
     },
-    [waveContract],
+    [waverContract],
   )
 
   if (!isRinkeby) {

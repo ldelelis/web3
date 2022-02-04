@@ -1,10 +1,8 @@
 import { ReactElement, useEffect, useState } from "react"
-
-import { Contract } from "@ethersproject/contracts"
 import { BigNumber } from "@ethersproject/bignumber"
 import { Web3Provider } from "@ethersproject/providers"
 
-import { ChainId } from "~/types"
+import { ChainId, Counter as CounterContract } from "~/types"
 import {
   useAccount,
   useChainId,
@@ -43,7 +41,7 @@ function Information({ metamask }: { metamask?: Web3Provider }): ReactElement {
   useEffect(() => {
     if (!counterContract) return
 
-    async function getCounterCount(counterContract: Contract) {
+    async function getCounterCount(counterContract: CounterContract) {
       if (!counterContract) return
 
       const bigCounterCount = await counterContract.value()

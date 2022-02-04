@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-contract Erc721PayPerMint is ERC721, Ownable {
+contract Mint is ERC721, Ownable {
   using SafeMath for uint256;
 
   constructor() ERC721("Erc721PayPerMint", "MINT") {}
