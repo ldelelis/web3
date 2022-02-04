@@ -1,7 +1,6 @@
 import { ReactElement } from "react"
-import { Contract } from "@ethersproject/contracts"
 
-import { ChainId } from "~/types"
+import { ChainId, Erc721PayPerMint } from "~/types"
 import {
   useChainId,
   useAccount,
@@ -51,19 +50,19 @@ export default function Erc721(): ReactElement {
     )
   }
 
-  return <Information account={account} erc721Contract={erc721Contract} />
+  return <Information erc721Contract={erc721Contract} owner={account} />
 }
 
 function Information({
-  account,
+  owner,
   erc721Contract,
 }: {
-  account: string
-  erc721Contract: Contract
+  owner: string
+  erc721Contract: Erc721PayPerMint
 }) {
   return (
     <div className="flex flex-col">
-      <span>Sender: {account}</span>
+      <span>Owner: {owner}</span>
       <span>Contract address: {erc721Contract.address}</span>
     </div>
   )

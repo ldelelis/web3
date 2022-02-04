@@ -1,20 +1,17 @@
-import { Contract } from "@ethersproject/contracts"
+import { useSigner } from "~/hooks"
+import { Erc721PayPerMint } from "~/types"
+import { getErc721Contract } from "~/helpers"
+import { LOCALHOST_CONTRACT_ADDRESSES } from "~/constants"
 
-import { getAbi } from "~/helpers"
-import { useMetamask, useSigner } from "~/hooks"
-import {
-  Erc721PayPerMintArtifact,
-  LOCALHOST_CONTRACT_ADDRESSES,
-} from "~/constants"
-
-export function useErc721Contract(): Contract | undefined {
+export function useErc721Contract(): Erc721PayPerMint | undefined {
   const signer = useSigner()
-  const metamask = useMetamask()
 
-  if (!metamask || !signer) return undefined
+  if (!signer) return undefined
 
-  const abi = getAbi(Erc721PayPerMintArtifact)
-  const address = LOCALHOST_CONTRACT_ADDRESSES.erc721
+  const erc721Contract = getErc721Contract(
+    LOCALHOST_CONTRACT_ADDRESSES.erc721,
+    signer,
+  )
 
-  return new Contract(address, abi, signer)
+  return erc721Contract
 }
