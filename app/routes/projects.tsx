@@ -12,11 +12,11 @@ export default function Index(): ReactElement {
           <Link className="hover:underline underline-offset-2" to="waver">
             Waver
           </Link>
-          <Link className="hover:underline underline-offset-2" to="erc20">
-            Erc20
+          <Link className="hover:underline underline-offset-2" to="transfers">
+            Transfers
           </Link>
-          <Link className="hover:underline underline-offset-2" to="erc721">
-            Erc721
+          <Link className="hover:underline underline-offset-2" to="mint">
+            Mint
           </Link>
         </ul>
       </nav>
