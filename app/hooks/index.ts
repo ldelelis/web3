@@ -1,7 +1,7 @@
 export { useSigner } from "./useSigner"
-export { useAlchemy } from "./useAlchemy"
 export { useAccount } from "./useAccount"
 export { useChainId } from "./useChainId"
+export { useProvider } from "./useProvider"
 export { useMetamask } from "./useMetamask"
 export { useBlockNumber } from "./useBlockNumber"
 export { useConnectMetamask } from "./useConnectMetamask"

@@ -1,4 +1,4 @@
-import { ReactElement } from "react"
+import { ReactElement, useEffect, useState } from "react"
 
 import { ChainId, Mint as MintContract } from "~/types"
 import {
@@ -15,7 +15,7 @@ export default function Mint(): ReactElement {
 
   const account = useAccount({ metamask })
   const chainId = useChainId({ metamask })
-  const blockNumber = useBlockNumber()
+  const blockNumber = useBlockNumber({ chainId })
   const mintContract = useMintContract()
   const connectMetamask = useConnectMetamask()
 
@@ -25,7 +25,7 @@ export default function Mint(): ReactElement {
     connectMetamask()
   }
 
-  if (!account || !mintContract || !blockNumber) {
+  if (!account || !mintContract || typeof blockNumber !== "number") {
     return (
       <div className="flex justify-end items-center w-full space-x-2">
         <h3>You need to connect your Metamask</h3>
@@ -50,20 +50,44 @@ export default function Mint(): ReactElement {
     )
   }
 
-  return <Information mintContract={mintContract} owner={account} />
+  return (
+    <Information
+      blockNumber={blockNumber}
+      mintContract={mintContract}
+      owner={account}
+    />
+  )
 }
 
 function Information({
   owner,
+  blockNumber,
   mintContract,
 }: {
   owner: string
+  blockNumber: number
   mintContract: MintContract
 }) {
+  const [tokensCount, setTokensCount] = useState<number>(0)
+
+  useEffect(() => {
+    async function getTokensCount(blockNumber: number) {
+      const bigTokensCount = await mintContract.balanceOf(owner, {
+        blockTag: blockNumber,
+      })
+      const tokensCount = bigTokensCount.toNumber()
+
+      setTokensCount(tokensCount)
+    }
+
+    getTokensCount(blockNumber)
+  }, [blockNumber, mintContract, owner])
+
   return (
     <div className="flex flex-col">
       <span>Owner: {owner}</span>
       <span>Contract address: {mintContract.address}</span>
+      <span>Tokens owned: {tokensCount}</span>
     </div>
   )
 }

@@ -20,7 +20,7 @@ export default function App(): ReactElement {
 
   const account = useAccount({ metamask })
   const chainId = useChainId({ metamask })
-  const blockNumber = useBlockNumber()
+  const blockNumber = useBlockNumber({ chainId })
   const connectMetamask = useConnectMetamask()
   const transfersContract = useTransfersContract()
 
@@ -76,26 +76,23 @@ function Information({
 
   const isLoading = !name || !symbol || !decimals || !totalSupply
 
-  useEffect(
-    function getInformation() {
-      async function call() {
-        const [name, symbol, decimals, totalSupply] = await Promise.all([
-          transfersContract.name(),
-          transfersContract.symbol(),
-          transfersContract.decimals(),
-          transfersContract.totalSupply(),
-        ])
+  useEffect(() => {
+    async function getInformation() {
+      const [name, symbol, decimals, totalSupply] = await Promise.all([
+        transfersContract.name(),
+        transfersContract.symbol(),
+        transfersContract.decimals(),
+        transfersContract.totalSupply(),
+      ])
 
-        setName(name)
-        setSymbol(symbol)
-        setDecimals(decimals)
-        setTotalSupply(totalSupply)
-      }
+      setName(name)
+      setSymbol(symbol)
+      setDecimals(decimals)
+      setTotalSupply(totalSupply)
+    }
 
-      call()
-    },
-    [transfersContract],
-  )
+    getInformation()
+  }, [transfersContract])
 
   if (isLoading) {
     return (
@@ -162,23 +159,20 @@ function Transfers({
 
   const [transfers, setTransfers] = useState<Event[]>([])
 
-  useEffect(
-    function getPastTransfers() {
-      async function call() {
-        const transfersFilter = transfersContract.filters.Transfer()
-        const transfers = await transfersContract.queryFilter(
-          transfersFilter,
-          blockNumber - TRANSFER_BLOCKS_AMOUNT,
-          blockNumber,
-        )
+  useEffect(() => {
+    async function getPastTransfers() {
+      const transfersFilter = transfersContract.filters.Transfer()
+      const transfers = await transfersContract.queryFilter(
+        transfersFilter,
+        blockNumber - TRANSFER_BLOCKS_AMOUNT,
+        blockNumber,
+      )
 
-        setTransfers(transfers)
-      }
+      setTransfers(transfers)
+    }
 
-      call()
-    },
-    [blockNumber, transfersContract],
-  )
+    getPastTransfers()
+  }, [blockNumber, transfersContract])
 
   useEffect(
     function handleTransferEvent() {

@@ -24,11 +24,11 @@
     "dev:miniflare": "miniflare --build-command \"npm run dev:worker\" --watch",
     "hardhat:node": "hardhat node",
     "hardhat:compile": "hardhat compile",
-    "hardhat:wave:run": "hardhat run scripts/wave/run.ts",
-    "hardhat:wave:deploy": "hardhat run scripts/wave/deploy.ts --network rinkeby",
+    "hardhat:mint:deploy": "hardhat run scripts/mint/deploy.ts --network localhost",
+    "hardhat:waver:run": "hardhat run scripts/wave/run.ts",
+    "hardhat:waver:deploy": "hardhat run scripts/wave/deploy.ts --network rinkeby",
     "hardhat:greeter:run": "hardhat run scripts/greeter/run.ts",
-    "hardhat:greeter:deploy": "hardhat run scripts/greeter/deploy.ts --network rinkeby",
-    "hardhat:erc721:deploy": "hardhat run scripts/erc721/deploy.ts --network localhost"
+    "hardhat:greeter:deploy": "hardhat run scripts/greeter/deploy.ts --network rinkeby"
   },
   "dependencies": {
     "@ethersproject/abi": "^5.5.0",

@@ -1,23 +1,28 @@
 import { useEffect, useState } from "react"
+import { JsonRpcProvider } from "@ethersproject/providers"
 
-import { useAlchemy } from "~/hooks"
+import { ChainId } from "~/types"
+import { useProvider } from "~/hooks"
 
-export function useBlockNumber(): number | undefined {
-  const [blockNumber, setBlockNumber] = useState<undefined | number>(undefined)
-  const alchemy = useAlchemy()
+export function useBlockNumber({
+  chainId,
+}: {
+  chainId?: ChainId
+}): number | undefined {
+  const [blockNumber, setBlockNumber] = useState<number | undefined>(undefined)
 
-  useEffect(
-    function getInitialBlockNumber() {
-      async function call() {
-        const blockNumber = await alchemy.getBlockNumber()
+  const provider = useProvider({ chainId })
 
-        setBlockNumber(blockNumber)
-      }
+  useEffect(() => {
+    if (!provider) return
 
-      call()
-    },
-    [alchemy],
-  )
+    async function getInitialBlockNumber(provider: JsonRpcProvider) {
+      const blockNumber = await provider.getBlockNumber()
+      setBlockNumber(blockNumber)
+    }
+
+    getInitialBlockNumber(provider)
+  }, [provider])
 
   // TODO: listen to "block" event
   // useEffect(
@@ -26,7 +31,7 @@ export function useBlockNumber(): number | undefined {
   //       setBlockNumber(blockNumber)
   //     }
 
-  //     alchemy.on("block", handleBlockNumber)
+  //     provider.on("block", handleBlockNumber)
 
   //     return () => {
   //       alchemy.off("block", () => {

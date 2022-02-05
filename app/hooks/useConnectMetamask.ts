@@ -8,7 +8,10 @@ export function useConnectMetamask(): () => Promise<void> {
   async function connectMetamask() {
     invariant(metamask, "You need to have Metamask installed")
 
-    await metamask.send("eth_requestAccounts", [])
+    await metamask.send("eth_requestAccounts", []).then((accounts) => {
+      // TODO: set "accounts" on provider
+      console.log("accounts", accounts)
+    })
   }
 
   return connectMetamask

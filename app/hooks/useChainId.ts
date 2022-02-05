@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react"
 import { Web3Provider } from "@ethersproject/providers"
 
+import { ChainId } from "~/types"
+
 export function useChainId({
   metamask,
 }: {
   metamask?: Web3Provider
-}): number | undefined {
-  const [chainId, setChainId] = useState<undefined | number>(undefined)
+}): ChainId | undefined {
+  const [chainId, setChainId] = useState<ChainId | undefined>(undefined)
 
   function hexToNumber(hexChainId: string): number {
     return Number(hexChainId.slice(2))
