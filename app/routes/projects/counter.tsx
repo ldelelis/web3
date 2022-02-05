@@ -15,7 +15,7 @@ export default function Counter(): ReactElement {
 
   const chainId = useChainId({ metamask })
 
-  const isRinkeby = chainId !== ChainId.Rinkeby
+  const isRinkeby = chainId === ChainId.Rinkeby
 
   if (!isRinkeby) {
     return (
