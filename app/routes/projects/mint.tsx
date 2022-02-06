@@ -1,16 +1,18 @@
-import { ReactElement, useEffect, useState } from "react"
+import { useState, useEffect, ChangeEvent, ReactElement } from "react"
+import { BigNumber } from "@ethersproject/bignumber"
 
 import { ChainId, Mint as MintContract } from "~/types"
 import {
   useChainId,
   useAccount,
+  useGasPrice,
   useMetamask,
   useBlockNumber,
   useMintContract,
   useConnectMetamask,
 } from "~/hooks"
 
-export default function Mint(): ReactElement {
+export default function MintProject(): ReactElement {
   const metamask = useMetamask()
 
   const account = useAccount({ metamask })
@@ -68,7 +70,10 @@ function Information({
   blockNumber: number
   mintContract: MintContract
 }) {
+  const [tokenIds, setTokenIds] = useState<BigNumber[]>([])
   const [tokensCount, setTokensCount] = useState<number>(0)
+
+  const gasPrice = useGasPrice()
 
   useEffect(() => {
     async function getTokensCount(blockNumber: number) {
@@ -83,11 +88,113 @@ function Information({
     getTokensCount(blockNumber)
   }, [blockNumber, mintContract, owner])
 
+  useEffect(() => {
+    if (tokensCount < 1) return
+
+    async function getTokenIds(tokensCount: number) {
+      const tokenIdsPromises = Array.from({ length: tokensCount }, (_, index) =>
+        mintContract.tokenOfOwnerByIndex(owner, index, {
+          blockTag: blockNumber,
+        }),
+      )
+      const tokenIds = await Promise.all(tokenIdsPromises)
+
+      setTokenIds(tokenIds)
+    }
+
+    getTokenIds(tokensCount)
+  }, [blockNumber, mintContract, owner, tokensCount])
+
+  async function canMint(tokenId: number) {
+    const doesTokenExist = await mintContract.exists(tokenId)
+
+    return doesTokenExist
+  }
+
+  async function mint(tokenId: number) {
+    if (!gasPrice) {
+      console.warn('You need to know the "gasPrice" to execute this method')
+
+      return
+    }
+
+    const bigTokenId = BigNumber.from(tokenId)
+
+    const from = owner
+    const value = bigTokenId.mul(1e12)
+    const gasLimit = await mintContract.estimateGas.mint(owner, tokenId, {
+      value,
+      gasPrice,
+    })
+
+    await mintContract.mint(owner, tokenId, { value, from, gasLimit, gasPrice })
+  }
+
   return (
     <div className="flex flex-col">
-      <span>Owner: {owner}</span>
-      <span>Contract address: {mintContract.address}</span>
-      <span>Tokens owned: {tokensCount}</span>
+      <ul>
+        {tokenIds.map((tokenId) => (
+          <li key={`token_id_${tokenId.toNumber()}`}>{tokenId.toNumber()}</li>
+        ))}
+      </ul>
+      <Mint canMint={canMint} mint={mint} />
+    </div>
+  )
+}
+
+function Mint({
+  mint,
+  canMint,
+}: {
+  mint: (tokenId: number) => Promise<void>
+  canMint: (tokenId: number) => Promise<boolean>
+}) {
+  const [tokenId, setTokenId] = useState<number>(0)
+  const [isMintable, setIsMintable] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (!tokenId) return
+
+    async function checkIsMintable(tokenId: number) {
+      const isMintable = await canMint(tokenId)
+
+      setIsMintable(isMintable)
+    }
+
+    checkIsMintable(tokenId)
+  }, [canMint, tokenId])
+
+  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+    const tokenId = Number(event.target.value)
+
+    if (tokenId) {
+      setTokenId(tokenId)
+    }
+  }
+
+  async function handleMint() {
+    if (!tokenId || !isMintable) return
+
+    mint(tokenId)
+  }
+
+  const isDisabled = !isMintable
+
+  return (
+    <div className="flex items-center space-x-2">
+      <input
+        className="border-2"
+        type="number"
+        value={tokenId}
+        onChange={handleChange}
+      />
+      <button
+        className="bg-slate-400 rounded-sm p-1 hover:cursor-pointer"
+        disabled={isDisabled}
+        onClick={handleMint}
+      >
+        Create
+      </button>
     </div>
   )
 }

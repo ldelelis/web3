@@ -10,7 +10,7 @@ import {
   useCounterContract,
 } from "~/hooks"
 
-export default function Counter(): ReactElement {
+export default function CounterProject(): ReactElement {
   const metamask = useMetamask()
 
   const chainId = useChainId({ metamask })

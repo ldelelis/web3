@@ -15,7 +15,7 @@ import {
   useTransfersContract,
 } from "~/hooks"
 
-export default function App(): ReactElement {
+export default function TransfersProject(): ReactElement {
   const metamask = useMetamask()
 
   const account = useAccount({ metamask })

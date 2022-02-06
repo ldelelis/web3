@@ -3,6 +3,7 @@ export { useAccount } from "./useAccount"
 export { useChainId } from "./useChainId"
 export { useProvider } from "./useProvider"
 export { useMetamask } from "./useMetamask"
+export { useGasPrice } from "./useGasPrice"
 export { useBlockNumber } from "./useBlockNumber"
 export { useConnectMetamask } from "./useConnectMetamask"
 

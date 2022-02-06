@@ -11,7 +11,7 @@ import {
   useConnectMetamask,
 } from "~/hooks"
 
-export default function Waver(): ReactElement {
+export default function WaverProject(): ReactElement {
   const [waves, setWaves] = useState<Wave[]>([])
   const [message, setMessage] = useState<string>("")
   const [wavesCount, setWavesCount] = useState<number>(0)
