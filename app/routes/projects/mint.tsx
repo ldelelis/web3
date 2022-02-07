@@ -144,6 +144,7 @@ function Information({
 
     const from = owner
     const value = bigTokenId.mul(1e12)
+
     const gasLimit = await mintContract.estimateGas.mint(owner, tokenId, {
       value,
       gasPrice,
@@ -151,19 +152,24 @@ function Information({
 
     try {
       // 1. "Idle" state
-      // 2. "Pending" state until user signs it's Metamask
+      console.log("Idle")
 
-      // 3. "Mining" state
+      // 2. "Pending" state until user signs it's Metamask
+      console.log("Pending")
       const tx = await mintContract.mint(owner, tokenId, {
         value,
         from,
         gasLimit,
         gasPrice,
       })
+
+      // 3. "Mining" state
+      console.log("Mining")
       console.log("Transaction: ", tx)
 
       // 4. "Mined" state
       const receipt = await tx.wait()
+      console.log("Mined")
       console.log("Receipt: ", receipt)
 
       // 5. "Confirmed" state after N blocks of confirmations since "lastBlock"
