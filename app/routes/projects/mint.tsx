@@ -105,6 +105,28 @@ function Information({
     getTokenIds(tokensCount)
   }, [blockNumber, mintContract, owner, tokensCount])
 
+  useEffect(() => {
+    if (!mintContract) return
+
+    function handleTransferOff(mintContract: MintContract) {
+      mintContract.off("Transfer", () => {
+        console.warn(`Unsubscribed from "Transfer" Mint contract's event`)
+      })
+    }
+
+    function handleTransferOn(mintContract: MintContract) {
+      mintContract.on("Transfer", (_, __, tokenId) => {
+        setTokenIds((prevTokenIds) => [...prevTokenIds, tokenId])
+      })
+    }
+
+    handleTransferOn(mintContract)
+
+    return () => {
+      handleTransferOff(mintContract)
+    }
+  }, [mintContract])
+
   async function canMint(tokenId: number) {
     const doesTokenExist = await mintContract.exists(tokenId)
 
@@ -127,12 +149,34 @@ function Information({
       gasPrice,
     })
 
-    await mintContract.mint(owner, tokenId, { value, from, gasLimit, gasPrice })
+    try {
+      // 1. "Idle" state
+      // 2. "Pending" state until user signs it's Metamask
+
+      // 3. "Mining" state
+      const tx = await mintContract.mint(owner, tokenId, {
+        value,
+        from,
+        gasLimit,
+        gasPrice,
+      })
+      console.log("Transaction: ", tx)
+
+      // 4. "Mined" state
+      const receipt = await tx.wait()
+      console.log("Receipt: ", receipt)
+
+      // 5. "Confirmed" state after N blocks of confirmations since "lastBlock"
+    } catch (error) {
+      // *. "Error" state
+      console.error(error)
+    }
   }
 
   return (
     <div className="flex flex-col">
       <ul>
+        {/* TODO: filter "tokenIds" with "byConfirmations" of 6 blocks */}
         {tokenIds.map((tokenId) => (
           <li key={`token_id_${tokenId.toNumber()}`}>{tokenId.toNumber()}</li>
         ))}

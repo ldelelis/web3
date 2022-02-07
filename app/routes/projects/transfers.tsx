@@ -155,7 +155,7 @@ function Transfers({
   transfersContract: TransfersContract
 }): ReactElement {
   const TRANSFER_BLOCKS_AMOUNT = 3000
-  const TRANSFER_CONFIRMATIONS = 20
+  const BLOCK_CONFIRMATIONS = 20
 
   const [transfers, setTransfers] = useState<Event[]>([])
 
@@ -174,32 +174,35 @@ function Transfers({
     getPastTransfers()
   }, [blockNumber, transfersContract])
 
-  useEffect(
-    function handleTransferEvent() {
-      if (!transfersContract) return
+  useEffect(() => {
+    if (!transfersContract) return
 
+    function handleTransferOff(transfersContract: TransfersContract) {
+      transfersContract.off("Transfer", () => {
+        console.warn(`Unsubscribed from "Transfer" Transfers contract's event`)
+      })
+    }
+
+    function handleTransferOn(transfersContract: TransfersContract) {
       transfersContract.on("Transfer", (transfer) => {
         setTransfers((prevTransfers) => [...prevTransfers, transfer])
       })
+    }
 
-      return () => {
-        transfersContract.off("Transfer", () => {
-          console.warn(
-            `Unsubscribed from "Transfer" Transfers contract's event`,
-          )
-        })
-      }
-    },
-    [transfersContract],
-  )
+    handleTransferOn(transfersContract)
 
-  function byConfirmedEvent(transfer: Event) {
-    return blockNumber - transfer.blockNumber > TRANSFER_CONFIRMATIONS
+    return () => {
+      handleTransferOff(transfersContract)
+    }
+  }, [transfersContract])
+
+  function byConfirmations(transfer: Event) {
+    return blockNumber - transfer.blockNumber > BLOCK_CONFIRMATIONS
   }
 
   return (
     <ul className="flex flex-col items-center justify-center">
-      {transfers.filter(byConfirmedEvent).map(({ args, transactionHash }) => {
+      {transfers.filter(byConfirmations).map(({ args, transactionHash }) => {
         invariant(args, "Transfer events should include arguments")
 
         const url = ETHERSCAN_URL + transactionHash

@@ -46,8 +46,8 @@ async function main() {
     console.log("Transaction: ", tx)
 
     // 4. "Mined" state
-    const txReceipt = await tx.wait()
-    console.log("Transaction receipt: ", txReceipt)
+    const receipt = await tx.wait()
+    console.log("Receipt: ", receipt)
 
     // 5. "Confirmed" state after N blocks of confirmations since "lastBlock"
   } catch (error) {
