@@ -108,7 +108,7 @@ function Information({
   async function canMint(tokenId: number) {
     const doesTokenExist = await mintContract.exists(tokenId)
 
-    return doesTokenExist
+    return !doesTokenExist
   }
 
   async function mint(tokenId: number) {

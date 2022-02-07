@@ -6,7 +6,7 @@ import { LOCALHOST_CONTRACT_ADDRESSES } from "~/constants"
 
 export function useMintContract(): Mint | undefined {
   const signer = useSigner()
-  const address = LOCALHOST_CONTRACT_ADDRESSES.erc721
+  const address = LOCALHOST_CONTRACT_ADDRESSES.mint
 
   if (!signer) return undefined
 

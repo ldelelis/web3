@@ -7,7 +7,7 @@ import { RIKEBY_CONTRACT_ADDRESSES } from "~/constants"
 export function useWaverContract(): Waver | undefined {
   const signer = useSigner()
   const metamask = useMetamask()
-  const address = RIKEBY_CONTRACT_ADDRESSES.wave
+  const address = RIKEBY_CONTRACT_ADDRESSES.waver
 
   if (!metamask || !signer) return undefined
 

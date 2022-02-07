@@ -7,7 +7,7 @@ import { MAINNET_CONTRACT_ADDRESSES } from "~/constants"
 export function useTransfersContract(): Transfers | undefined {
   const signer = useSigner()
   const metamask = useMetamask()
-  const address = MAINNET_CONTRACT_ADDRESSES.erc20
+  const address = MAINNET_CONTRACT_ADDRESSES.transfers
 
   if (!metamask || !signer) return undefined
 

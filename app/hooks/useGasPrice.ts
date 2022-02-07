@@ -19,7 +19,7 @@ export function useGasPrice(): number | undefined {
         },
       })
         .then((response) => response.json())
-        .then(({ fast }) => gweiToWei(fast))
+        .then(({ fast: gwei }) => gweiToWei(gwei))
         .then(setGasPrice)
     }
 
