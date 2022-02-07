@@ -18,3 +18,7 @@ export function bigNumberToString(
 
   return bigNumber.div(divisor).toString()
 }
+
+export function big(value: number | string): BigNumber {
+  return BigNumber.from(value)
+}

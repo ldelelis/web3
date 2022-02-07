@@ -34,20 +34,16 @@ function Information({ metamask }: { metamask?: Web3Provider }): ReactElement {
   const account = useAccount({ metamask })
   const counterContract = useCounterContract()
 
-  function bigToString(bigNumber: BigNumber) {
-    return BigNumber.from(bigNumber).toString()
-  }
-
   useEffect(() => {
     if (!counterContract) return
 
     async function getCounterCount(counterContract: CounterContract) {
       if (!counterContract) return
 
-      const bigCounterCount = await counterContract.value()
-      const counter = bigToString(bigCounterCount)
+      const currentCount = await counterContract.value()
+      const counter = currentCount.toNumber()
 
-      setCounter(Number(counter))
+      setCounter(counter)
     }
 
     getCounterCount(counterContract)
@@ -57,10 +53,10 @@ function Information({ metamask }: { metamask?: Web3Provider }): ReactElement {
     function handleIncreasedEvent() {
       if (!counterContract) return
 
-      counterContract.on("Increased", (bigNextCounter) => {
-        const nextCounter = bigToString(bigNextCounter)
+      counterContract.on("Increased", (bigNextCounter: BigNumber) => {
+        const nextCounter = bigNextCounter.toNumber()
 
-        setCounter(Number(nextCounter))
+        setCounter(nextCounter)
       })
 
       return () => {

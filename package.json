@@ -24,7 +24,7 @@
     "dev:miniflare": "miniflare --build-command \"npm run dev:worker\" --watch",
     "hardhat:node": "hardhat node",
     "hardhat:compile": "hardhat compile",
-    "hardhat:mint:deploy": "hardhat run scripts/mint/deploy.ts --network localhost",
+    "hardhat:mint:deploy": "hardhat run scripts/mint/deploy.ts --network rinkeby",
     "hardhat:waver:run": "hardhat run scripts/wave/run.ts",
     "hardhat:waver:deploy": "hardhat run scripts/wave/deploy.ts --network rinkeby",
     "hardhat:greeter:run": "hardhat run scripts/greeter/run.ts",

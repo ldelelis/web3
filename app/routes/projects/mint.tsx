@@ -1,12 +1,14 @@
 import { useState, useEffect, ChangeEvent, ReactElement } from "react"
 import { BigNumber } from "@ethersproject/bignumber"
 
+import { big } from "~/helpers"
 import { ChainId, Mint as MintContract } from "~/types"
 import {
   useChainId,
   useAccount,
   useGasPrice,
   useMetamask,
+  useTransaction,
   useBlockNumber,
   useMintContract,
   useConnectMetamask,
@@ -21,7 +23,7 @@ export default function MintProject(): ReactElement {
   const mintContract = useMintContract()
   const connectMetamask = useConnectMetamask()
 
-  const isLocalhost = chainId === ChainId.Localhost
+  const isRinkeby = chainId === ChainId.Rinkeby
 
   async function handleConnectMetamaskClick(): Promise<void> {
     connectMetamask()
@@ -41,13 +43,10 @@ export default function MintProject(): ReactElement {
     )
   }
 
-  if (!isLocalhost) {
+  if (!isRinkeby) {
     return (
       <div>
-        <h3>
-          This section works on Localhost and having the node running locally.
-          Try changing to it from Metamask
-        </h3>
+        <h3>This section works on Rinkeby. Try changing to it from Metamask</h3>
       </div>
     )
   }
@@ -73,7 +72,11 @@ function Information({
   const [tokenIds, setTokenIds] = useState<BigNumber[]>([])
   const [tokensCount, setTokensCount] = useState<number>(0)
 
+  const { sendTransaction, transactionState } = useTransaction({ blockNumber })
   const gasPrice = useGasPrice()
+
+  // TODO: create "useTransactionToast"
+  console.log("transactionState", transactionState)
 
   useEffect(() => {
     async function getTokensCount(blockNumber: number) {
@@ -140,51 +143,29 @@ function Information({
       return
     }
 
-    const bigTokenId = BigNumber.from(tokenId)
-
-    const from = owner
-    const value = bigTokenId.mul(1e12)
-
+    const value = big(tokenId).mul(1e12)
     const gasLimit = await mintContract.estimateGas.mint(owner, tokenId, {
       value,
       gasPrice,
     })
 
-    try {
-      // 1. "Idle" state
-      console.log("Idle")
-
-      // 2. "Pending" state until user signs it's Metamask
-      console.log("Pending")
-      const tx = await mintContract.mint(owner, tokenId, {
+    sendTransaction(() =>
+      mintContract.mint(owner, tokenId, {
         value,
-        from,
         gasLimit,
         gasPrice,
-      })
-
-      // 3. "Mining" state
-      console.log("Mining")
-      console.log("Transaction: ", tx)
-
-      // 4. "Mined" state
-      const receipt = await tx.wait()
-      console.log("Mined")
-      console.log("Receipt: ", receipt)
-
-      // 5. "Confirmed" state after N blocks of confirmations since "lastBlock"
-    } catch (error) {
-      // *. "Error" state
-      console.error(error)
-    }
+      }),
+    )
   }
 
   return (
     <div className="flex flex-col">
       <ul>
         {/* TODO: filter "tokenIds" with "byConfirmations" of 6 blocks */}
-        {tokenIds.map((tokenId) => (
-          <li key={`token_id_${tokenId.toNumber()}`}>{tokenId.toNumber()}</li>
+        {tokenIds.map((tokenId, index) => (
+          <li key={`token_id_${tokenId.toNumber()}_${index}`}>
+            {tokenId.toNumber()}
+          </li>
         ))}
       </ul>
       <Mint canMint={canMint} mint={mint} />

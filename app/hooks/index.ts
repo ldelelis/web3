@@ -5,6 +5,7 @@ export { useProvider } from "./useProvider"
 export { useMetamask } from "./useMetamask"
 export { useGasPrice } from "./useGasPrice"
 export { useBlockNumber } from "./useBlockNumber"
+export { useTransaction } from "./useTransaction"
 export { useConnectMetamask } from "./useConnectMetamask"
 
 export { useMintContract } from "./contracts/useMintContract"

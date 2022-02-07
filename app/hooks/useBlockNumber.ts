@@ -16,31 +16,19 @@ export function useBlockNumber({
   useEffect(() => {
     if (!provider) return
 
-    async function getInitialBlockNumber(provider: JsonRpcProvider) {
+    const blockIntervalId = setInterval(() => getBlockNumber(provider), 10000)
+
+    async function getBlockNumber(provider: JsonRpcProvider) {
       const blockNumber = await provider.getBlockNumber()
       setBlockNumber(blockNumber)
     }
 
-    getInitialBlockNumber(provider)
+    getBlockNumber(provider)
+
+    return () => {
+      clearInterval(blockIntervalId)
+    }
   }, [provider])
-
-  // TODO: listen to "block" event
-  // useEffect(
-  //   function listenBlockEvent() {
-  //     function handleBlockNumber(blockNumber: number) {
-  //       setBlockNumber(blockNumber)
-  //     }
-
-  //     provider.on("block", handleBlockNumber)
-
-  //     return () => {
-  //       alchemy.off("block", () => {
-  //         console.warn(`Unsubscribed from "block" Web3Provider event`)
-  //       })
-  //     }
-  //   },
-  //   [alchemy],
-  // )
 
   return blockNumber
 }
