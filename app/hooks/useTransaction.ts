@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react"
-import { ContractTransaction } from "@ethersproject/contracts"
+import { ContractTransaction, ContractReceipt } from "@ethersproject/contracts"
 
 import { DEFAULT_BLOCK_CONFIRMATIONS } from "~/constants"
+import { getErrorMessage } from "~/helpers"
 
 export type TransactionFunction = () => Promise<ContractTransaction>
-export enum TransactionState {
+export enum TransactionStateType {
   Idle = "IDLE",
   Mined = "MINED",
   Failed = "FAILED",
@@ -12,6 +13,28 @@ export enum TransactionState {
   Pending = "PENDING",
   Confirmed = "CONFIRMED",
 }
+
+type TransactionState =
+  | {
+      state: TransactionStateType.Idle
+    }
+  | { state: TransactionStateType.Pending }
+  | {
+      state: TransactionStateType.Mining
+      transaction: ContractTransaction
+    }
+  | {
+      state: TransactionStateType.Mined
+      receipt: ContractReceipt
+    }
+  | {
+      state: TransactionStateType.Confirmed
+      receipt: ContractReceipt
+    }
+  | {
+      state: TransactionStateType.Failed
+      error: string
+    }
 
 export function useTransaction({
   blockNumber,
@@ -23,40 +46,43 @@ export function useTransaction({
   sendTransaction: (transactionFunction: TransactionFunction) => Promise<void>
   transactionState: TransactionState
 } {
-  const [transactionState, setTransactionState] = useState<TransactionState>(
-    TransactionState.Idle,
-  )
-  const [receiptBlockNumber, setReceiptBlockNumber] = useState<
-    number | undefined
-  >(undefined)
+  const [transactionState, setTransactionState] = useState<TransactionState>({
+    state: TransactionStateType.Idle,
+  })
 
   useEffect(() => {
-    if (!receiptBlockNumber || !blockNumber) return
+    if (transactionState.state !== TransactionStateType.Mined || !blockNumber)
+      return
 
+    const receiptBlockNumber = transactionState.receipt.blockNumber
     const isConfirmed = receiptBlockNumber + blockConfirmations < blockNumber
 
     if (isConfirmed) {
-      setTransactionState(TransactionState.Confirmed)
+      setTransactionState({
+        state: TransactionStateType.Confirmed,
+        receipt: transactionState.receipt,
+      })
     }
-  }, [blockConfirmations, blockNumber, receiptBlockNumber])
+  }, [blockConfirmations, blockNumber, transactionState])
 
   async function sendTransaction(transactionFunction: TransactionFunction) {
     try {
-      setTransactionState(TransactionState.Pending)
+      setTransactionState({ state: TransactionStateType.Pending })
 
       const transaction = await transactionFunction()
-      console.log("Transaction: ", transaction)
 
-      setTransactionState(TransactionState.Mining)
+      setTransactionState({ state: TransactionStateType.Mining, transaction })
 
       const receipt = await transaction.wait()
-      console.log("Receipt: ", receipt)
 
-      setTransactionState(TransactionState.Mined)
-      setReceiptBlockNumber(receipt.blockNumber)
+      setTransactionState({ state: TransactionStateType.Mined, receipt })
     } catch (error) {
-      setTransactionState(TransactionState.Failed)
-      console.error(error)
+      const errorMessage = getErrorMessage(error)
+
+      setTransactionState({
+        state: TransactionStateType.Failed,
+        error: errorMessage,
+      })
     }
   }
 

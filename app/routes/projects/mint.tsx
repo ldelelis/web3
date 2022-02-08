@@ -72,11 +72,8 @@ function Information({
   const [tokenIds, setTokenIds] = useState<BigNumber[]>([])
   const [tokensCount, setTokensCount] = useState<number>(0)
 
-  const { sendTransaction, transactionState } = useTransaction({ blockNumber })
+  const { sendTransaction } = useTransaction({ blockNumber })
   const gasPrice = useGasPrice()
-
-  // TODO: create "useTransactionToast"
-  console.log("transactionState", transactionState)
 
   useEffect(() => {
     async function getTokensCount(blockNumber: number) {
