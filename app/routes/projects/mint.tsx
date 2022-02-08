@@ -161,7 +161,6 @@ function Information({
   return (
     <div className="flex flex-col">
       <ul>
-        {/* TODO: filter "tokenIds" with "byConfirmations" of 6 blocks */}
         {tokenIds.map((tokenId, index) => (
           <li key={`token_id_${tokenId.toNumber()}_${index}`}>
             {tokenId.toNumber()}
