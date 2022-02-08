@@ -70,11 +70,9 @@ export function useTransaction({
       setTransactionState({ state: TransactionStateType.Pending })
 
       const transaction = await transactionFunction()
-
       setTransactionState({ state: TransactionStateType.Mining, transaction })
 
       const receipt = await transaction.wait()
-
       setTransactionState({ state: TransactionStateType.Mined, receipt })
     } catch (error) {
       const errorMessage = getErrorMessage(error)
