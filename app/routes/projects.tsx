@@ -18,6 +18,9 @@ export default function Index(): ReactElement {
           <Link className="hover:underline underline-offset-2" to="mint">
             Mint
           </Link>
+          <Link className="hover:underline underline-offset-2" to="indexing">
+            Indexing
+          </Link>
         </ul>
       </nav>
       <div className="flex items-center justify-center flex-1 w-full">
