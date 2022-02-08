@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react"
 import { ContractTransaction } from "@ethersproject/contracts"
 
-type TransactionFunction = () => Promise<ContractTransaction>
-enum TransactionState {
+import { DEFAULT_BLOCK_CONFIRMATIONS } from "~/constants"
+
+export type TransactionFunction = () => Promise<ContractTransaction>
+export enum TransactionState {
   Idle = "IDLE",
   Mined = "MINED",
   Failed = "FAILED",
@@ -10,8 +12,6 @@ enum TransactionState {
   Pending = "PENDING",
   Confirmed = "CONFIRMED",
 }
-
-const DEFAULT_BLOCK_CONFIRMATIONS = 2
 
 export function useTransaction({
   blockNumber,
