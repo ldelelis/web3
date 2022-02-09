@@ -437,9 +437,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-backdrop-saturate:  ;
   --tw-backdrop-sepia:  ;
 }
-.block {
-  display: block;
-}
 .flex {
   display: flex;
 }

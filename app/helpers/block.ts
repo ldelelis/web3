@@ -1,8 +1,13 @@
-import { getAlchemy } from "~/helpers"
+import { ChainId } from "~/types"
+import { getProvider } from "~/helpers"
 
-export async function getBlockNumber(): Promise<number> {
-  const alchemy = getAlchemy()
-  const blockNumber = await alchemy.getBlockNumber()
+export async function getBlockNumber({
+  chainId,
+}: {
+  chainId: ChainId
+}): Promise<number> {
+  const provider = getProvider({ chainId })
+  const blockNumber = await provider.getBlockNumber()
 
   return blockNumber
 }

@@ -3,6 +3,8 @@ export * from "./chain"
 export * from "./factories"
 
 export type {
-  TransactionState,
   TransactionFunction,
+  TransactionStateType,
 } from "~/hooks/useTransaction"
+
+export type { TransferEvent } from "typechain-types/ERC20"
