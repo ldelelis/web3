@@ -7,4 +7,4 @@ export type {
   TransactionStateType,
 } from "~/hooks/useTransaction"
 
-export type { TransferEvent } from "typechain-types/ERC20"
+export type { TransferEvent } from "../../typechain-types/ERC20"
