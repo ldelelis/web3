@@ -2,7 +2,7 @@ import { ChangeEvent, ReactElement, useEffect, useState } from "react"
 import invariant from "tiny-invariant"
 import { BigNumber } from "@ethersproject/bignumber"
 
-import { ChainId, Wave, Waver as WaverContract } from "~/types"
+import { ChainId, Waver as WaverContract } from "~/types"
 import {
   useAccount,
   useChainId,
@@ -10,6 +10,12 @@ import {
   useWaverContract,
   useConnectMetamask,
 } from "~/hooks"
+
+export type Wave = {
+  waver: string
+  message: string
+  timestamp: BigNumber
+}
 
 export default function WaverProject(): ReactElement {
   const [waves, setWaves] = useState<Wave[]>([])
