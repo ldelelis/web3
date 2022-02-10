@@ -1,4 +1,4 @@
-import { Mint__factory as mintFactory } from "typechain-types"
+import { Mint__factory as mintFactory } from "../../../typechain-types"
 
 import { Mint } from "~/types"
 import { useSigner } from "~/hooks"

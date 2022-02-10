@@ -1,4 +1,4 @@
-import { Transfers__factory as transfersFactory } from "typechain-types"
+import { Transfers__factory as transfersFactory } from "../../../typechain-types"
 
 import { Transfers } from "~/types"
 import { useMetamask, useSigner } from "~/hooks"

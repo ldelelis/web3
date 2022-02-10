@@ -1,4 +1,4 @@
-import { Waver__factory as waveFactory } from "typechain-types"
+import { Waver__factory as waveFactory } from "../../../typechain-types"
 
 import { Waver } from "~/types"
 import { useMetamask, useSigner } from "~/hooks"

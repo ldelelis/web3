@@ -1,4 +1,4 @@
-import { Counter__factory as counterFactory } from "typechain-types"
+import { Counter__factory as counterFactory } from "../../../typechain-types"
 
 import { Counter } from "~/types"
 import { useMetamask, useSigner } from "~/hooks"

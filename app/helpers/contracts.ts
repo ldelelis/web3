@@ -1,4 +1,4 @@
-import { ERC20__factory as erc20Factory } from "typechain-types"
+import { ERC20__factory as erc20Factory } from "../../typechain-types"
 
 import { getProvider } from "~/helpers"
 import { ChainId, Erc20 } from "~/types"
