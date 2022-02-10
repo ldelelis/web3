@@ -9,6 +9,7 @@
   "sideEffects": false,
   "main": "dist/worker.js",
   "scripts": {
+    "start": "remix-serve build",
     "commit": "npx cz",
     "deploy": "fly deploy --remote-only",
     "reinstall": "rm -rf node_modules package-lock.json && npm i",
