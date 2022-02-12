@@ -99,31 +99,28 @@ export default function WaverProject(): ReactElement {
     }
   }
 
-  useEffect(
-    function handleNewWaveEvent() {
-      if (!waverContract) return
+  useEffect(() => {
+    if (!waverContract) return
 
-      function handleNewWave(
-        from: string,
-        timestamp: BigNumber,
-        message: string,
-      ) {
-        setWaves((prevWaves) => [
-          ...prevWaves,
-          { waver: from, timestamp, message },
-        ])
-      }
+    function handleNewWave(
+      from: string,
+      timestamp: BigNumber,
+      message: string,
+    ) {
+      setWaves((prevWaves) => [
+        ...prevWaves,
+        { waver: from, timestamp, message },
+      ])
+    }
 
-      waverContract.on("NewWave", handleNewWave)
+    waverContract.on("NewWave", handleNewWave)
 
-      return () => {
-        waverContract.off("NewWave", () => {
-          console.warn(`Unsubscribed from "Increased" Counter contract's event`)
-        })
-      }
-    },
-    [waverContract],
-  )
+    return () => {
+      waverContract.off("NewWave", () => {
+        console.warn(`Unsubscribed from "Increased" Counter contract's event`)
+      })
+    }
+  }, [waverContract])
 
   if (!isRinkeby) {
     return (
@@ -134,11 +131,11 @@ export default function WaverProject(): ReactElement {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center w-full">
+    <div className="flex w-full flex-col items-center justify-center">
       <h1 className="text-2xl">Wave at me</h1>
       <h3>I have been waved {wavesCount} times</h3>
-      <div className="flex flex-col items-stretch w-full space-y-2">
-        <div className="flex justify-end items-center w-full space-x-2">
+      <div className="flex w-full flex-col items-stretch space-y-2">
+        <div className="flex w-full items-center justify-end space-x-2">
           {account ? (
             <>
               <h3>
@@ -150,37 +147,37 @@ export default function WaverProject(): ReactElement {
             </>
           ) : (
             <button
-              className="p-2 bg-indigo-500 rounded-sm text-white"
+              className="rounded-sm bg-indigo-500 p-2 text-white"
               onClick={handleConnectMetamaskClick}
             >
               Connect wallet
             </button>
           )}
         </div>
-        <div className="flex justify-end items-center space-x-2">
+        <div className="flex items-center justify-end space-x-2">
           <label aria-label="message" htmlFor="message">
             Add your message:
           </label>
           <input
-            className="border-2 border-indigo-500 w-72 h-10 p-2"
+            className="h-10 w-72 border-2 border-indigo-500 p-2"
             id="message"
             value={message}
             onChange={handleMessageChange}
           />
 
           <button
-            className="p-2 bg-indigo-500 rounded-sm text-white"
+            className="rounded-sm bg-indigo-500 p-2 text-white"
             onClick={handleWave}
           >
             Wave
           </button>
         </div>
-        <section className="flex flex-col w-full space-y-2">
+        <section className="flex w-full flex-col space-y-2">
           {waves
             ? waves.map(({ message, waver }, index) => (
                 <article
                   key={`wave_card_${waver}_${message.slice(0, 10)}_${index}`}
-                  className="p-2 bg-red-300"
+                  className="bg-red-300 p-2"
                 >
                   <p>
                     Waver {waver} said: {message}

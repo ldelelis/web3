@@ -4,8 +4,8 @@ import { BigNumber } from "@ethersproject/bignumber"
 import invariant from "tiny-invariant"
 
 import { ETHERSCAN_URL } from "~/constants"
-import { ChainId, Transfers as TransfersContract } from "~/types"
 import { bigNumberToString } from "~/helpers"
+import { ChainId, Transfers as TransfersContract, TransferEvent } from "~/types"
 import {
   useChainId,
   useAccount,
@@ -32,10 +32,10 @@ export default function TransfersProject(): ReactElement {
 
   if (!account || !transfersContract || !blockNumber) {
     return (
-      <div className="flex justify-end items-center w-full space-x-2">
+      <div className="flex w-full items-center justify-end space-x-2">
         <h3>You need to connect your Metamask</h3>
         <button
-          className="p-2 bg-indigo-500 rounded-sm text-white"
+          className="rounded-sm bg-indigo-500 p-2 text-white"
           onClick={handleConnectMetamaskClick}
         >
           Connect wallet
@@ -157,7 +157,7 @@ function Transfers({
   const TRANSFER_BLOCKS_AMOUNT = 3000
   const BLOCK_CONFIRMATIONS = 20
 
-  const [transfers, setTransfers] = useState<Event[]>([])
+  const [transfers, setTransfers] = useState<TransferEvent[]>([])
 
   useEffect(() => {
     async function getPastTransfers() {
@@ -184,7 +184,7 @@ function Transfers({
     }
 
     function handleTransferOn(transfersContract: TransfersContract) {
-      transfersContract.on("Transfer", (transfer) => {
+      transfersContract.on("Transfer", (transfer: TransferEvent) => {
         setTransfers((prevTransfers) => [...prevTransfers, transfer])
       })
     }
@@ -215,7 +215,7 @@ function Transfers({
         return (
           <a
             key={key}
-            className="hover:underline underline-offset-2"
+            className="underline-offset-2 hover:underline"
             href={url}
           >
             {from} to {to} for {amount} {symbol}

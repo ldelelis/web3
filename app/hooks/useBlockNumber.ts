@@ -8,7 +8,7 @@ export function useBlockNumber({
   chainId,
 }: {
   chainId?: ChainId
-}): number | undefined {
+} = {}): number | undefined {
   const [blockNumber, setBlockNumber] = useState<number | undefined>(undefined)
 
   const provider = useProvider({ chainId })
