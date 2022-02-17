@@ -19,111 +19,66 @@ type BalanceMapping = {
 
 export default function IndexingProject(): ReactElement {
   const [balances, setBalances] = useState<Balance[]>([])
-  const [transferEvents, setTransferEvents] = useState<TransferEvent[]>([])
 
-  async function getTransferEvents(
-    startBlock: number,
-    endBlock: number,
-    erc20Contract: Erc20,
-  ): Promise<void> {
-    const BATCH_SIZE = 100
+  function getBalanceMapping(transferEvents: TransferEvent[]) {
+    const balances = transferEvents.reduce((prevBalances, transferEvent) => {
+      const [from, to, weight] = transferEvent.args
+      console.log("********************************************")
+      console.log("New transfer event:")
+      console.log("To =>", to)
+      console.log("From =>", from)
+      console.log("Weight =>", weight)
+      console.log("********************************************")
 
-    for (
-      let fromBlock = startBlock;
-      fromBlock <= endBlock;
-      fromBlock += BATCH_SIZE
-    ) {
-      const toBlock = Math.min(fromBlock + BATCH_SIZE - 1, endBlock)
-      const transfersFilter = erc20Contract.filters.Transfer()
+      let nextBalances = {
+        ...prevBalances,
+      }
+      const isMinting = from === ZERO_ADDRESS
+      const shouldUpdateFromBalance = !isMinting
 
-      const nextTransferEvents = await erc20Contract.queryFilter(
-        transfersFilter,
-        fromBlock,
-        toBlock,
-      )
+      if (shouldUpdateFromBalance) {
+        const balance = prevBalances[from] ?? BigNumber.from(0)
+        const nextBalance = balance.sub(weight)
 
-      console.log("--------------------------------------------")
-      console.log("indexTranferEvents ~ fromBlock", fromBlock)
-      console.log("indexTranferEvents ~ toBlock", toBlock)
-      console.log("--------------------------------------------")
+        function composeFromBalance(from: string, nextBalance: BigNumber) {
+          nextBalances = {
+            ...nextBalances,
+            [from]: nextBalance,
+          }
+        }
 
-      function getBalanceMapping(transferEvents: TransferEvent[]) {
-        const balances = transferEvents.reduce(
-          (prevBalances, transferEvent) => {
-            const [from, to, weight] = transferEvent.args
-            console.log("********************************************")
-            console.log("New transfer event:")
-            console.log("To =>", to)
-            console.log("From =>", from)
-            console.log("Weight =>", weight)
-            console.log("********************************************")
-
-            let nextBalances = {
-              ...prevBalances,
-            }
-            const isMinting = from === ZERO_ADDRESS
-            const shouldUpdateFromBalance = !isMinting
-
-            if (shouldUpdateFromBalance) {
-              const balance = prevBalances[from] ?? BigNumber.from(0)
-              const nextBalance = balance.sub(weight)
-
-              function composeFromBalance(
-                from: string,
-                nextBalance: BigNumber,
-              ) {
-                nextBalances = {
-                  ...nextBalances,
-                  [from]: nextBalance,
-                }
-              }
-
-              composeFromBalance(from, nextBalance)
-            }
-
-            const isBurning = to === ZERO_ADDRESS
-            const shouldUpdateToBalance = !isBurning
-
-            if (shouldUpdateToBalance) {
-              const balance = prevBalances[to] ?? BigNumber.from(0)
-              const nextBalance = balance.sub(weight)
-
-              function composeToBalance(to: string, nextBalance: BigNumber) {
-                nextBalances = {
-                  ...nextBalances,
-                  [to]: nextBalance,
-                }
-              }
-
-              composeToBalance(to, nextBalance)
-            }
-
-            return nextBalances
-          },
-          {} as BalanceMapping,
-        )
-
-        return balances
+        composeFromBalance(from, nextBalance)
       }
 
-      function mappingToBalances(balanceMapping: BalanceMapping): Balance[] {
-        const balances: Balance[] = Object.entries(balanceMapping).map(
-          ([address, weight]) => ({ address, weight }),
-        )
+      const isBurning = to === ZERO_ADDRESS
+      const shouldUpdateToBalance = !isBurning
 
-        return balances
+      if (shouldUpdateToBalance) {
+        const balance = prevBalances[to] ?? BigNumber.from(0)
+        const nextBalance = balance.sub(weight)
+
+        function composeToBalance(to: string, nextBalance: BigNumber) {
+          nextBalances = {
+            ...nextBalances,
+            [to]: nextBalance,
+          }
+        }
+
+        composeToBalance(to, nextBalance)
       }
 
-      const balanceMapping = getBalanceMapping(nextTransferEvents)
-      const balances = mappingToBalances(balanceMapping)
+      return nextBalances
+    }, {} as BalanceMapping)
 
-      setBalances((prevBalances) => [...prevBalances, ...balances])
+    return balances
+  }
 
-      setTransferEvents((prevTransferEvents) => [
-        ...prevTransferEvents,
-        ...nextTransferEvents,
-      ])
-    }
+  function mappingToBalances(balanceMapping: BalanceMapping): Balance[] {
+    const balances: Balance[] = Object.entries(balanceMapping).map(
+      ([address, weight]) => ({ address, weight }),
+    )
+
+    return balances
   }
 
   useEffect(() => {
@@ -132,6 +87,39 @@ export default function IndexingProject(): ReactElement {
       address: COMPOUND_ADDRESS,
       chainId,
     })
+
+    async function getTransferEvents(
+      startBlock: number,
+      endBlock: number,
+      erc20Contract: Erc20,
+    ): Promise<void> {
+      const BATCH_SIZE = 100
+
+      for (
+        let fromBlock = startBlock;
+        fromBlock <= endBlock;
+        fromBlock += BATCH_SIZE
+      ) {
+        const toBlock = Math.min(fromBlock + BATCH_SIZE - 1, endBlock)
+        const transfersFilter = erc20Contract.filters.Transfer()
+
+        const nextTransferEvents = await erc20Contract.queryFilter(
+          transfersFilter,
+          fromBlock,
+          toBlock,
+        )
+
+        console.log("--------------------------------------------")
+        console.log("indexTranferEvents ~ fromBlock", fromBlock)
+        console.log("indexTranferEvents ~ toBlock", toBlock)
+        console.log("--------------------------------------------")
+
+        const balanceMapping = getBalanceMapping(nextTransferEvents)
+        const balances = mappingToBalances(balanceMapping)
+
+        setBalances((prevBalances) => [...prevBalances, ...balances])
+      }
+    }
 
     async function startIndexingTransfers() {
       const blockNumber = await getBlockNumber({ chainId })
@@ -157,7 +145,11 @@ export default function IndexingProject(): ReactElement {
 
     function handleTransferOn(erc20Contract: Erc20) {
       erc20Contract.on("Transfer", (transfer: TransferEvent) => {
-        setTransferEvents((prevTransfers) => [...prevTransfers, transfer])
+        const transfers = [transfer]
+        const balanceMapping = getBalanceMapping(transfers)
+        const balances = mappingToBalances(balanceMapping)
+
+        setBalances((prevBalances) => [...prevBalances, ...balances])
       })
     }
 
@@ -171,9 +163,6 @@ export default function IndexingProject(): ReactElement {
   return (
     <div className="flex flex-col">
       <h1>IndexingProject</h1>
-      {transferEvents.map(({ address, blockNumber }) => (
-        <span key={address + blockNumber}>{address}</span>
-      ))}
       {balances.map(({ address, weight }) => (
         <span key={address + weight.toString()}>{weight.toString()}</span>
       ))}
