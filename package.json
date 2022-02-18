@@ -3,11 +3,11 @@
   "name": "web3",
   "description": "My collection of web3 exercises, all in one place, well separated",
   "license": "MIT",
+  "sideEffects": false,
+  "main": "dist/worker.js",
   "engines": {
     "node": ">=14"
   },
-  "sideEffects": false,
-  "main": "dist/worker.js",
   "scripts": {
     "start": "remix-serve build",
     "commit": "npx cz",
