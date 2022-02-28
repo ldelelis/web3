@@ -1,6 +1,6 @@
 import { useState, ReactElement, useEffect } from "react"
-import { Event } from "@ethersproject/contracts"
-import { BigNumber } from "@ethersproject/bignumber"
+import type { Event } from "@ethersproject/contracts"
+import type { BigNumber } from "@ethersproject/bignumber"
 import invariant from "tiny-invariant"
 
 import { ETHERSCAN_URL } from "~/constants"

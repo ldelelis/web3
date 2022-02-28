@@ -1,6 +1,6 @@
 import { ChangeEvent, ReactElement, useEffect, useState } from "react"
 import invariant from "tiny-invariant"
-import { BigNumber } from "@ethersproject/bignumber"
+import type { BigNumber } from "@ethersproject/bignumber"
 
 import { ChainId, Waver as WaverContract } from "~/types"
 import {

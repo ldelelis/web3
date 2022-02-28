@@ -1,6 +1,6 @@
 import { ReactElement, useEffect, useState } from "react"
-import { BigNumber } from "@ethersproject/bignumber"
-import { Web3Provider } from "@ethersproject/providers"
+import type { BigNumber } from "@ethersproject/bignumber"
+import type { Web3Provider } from "@ethersproject/providers"
 
 import { ChainId, Counter as CounterContract } from "~/types"
 import {

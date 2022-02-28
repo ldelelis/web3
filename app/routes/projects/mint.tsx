@@ -1,5 +1,5 @@
 import { useState, useEffect, ChangeEvent, ReactElement } from "react"
-import { BigNumber } from "@ethersproject/bignumber"
+import type { BigNumber } from "@ethersproject/bignumber"
 
 import { big } from "~/helpers"
 import { ChainId, Mint as MintContract } from "~/types"
@@ -31,10 +31,10 @@ export default function MintProject(): ReactElement {
 
   if (!account || !mintContract || typeof blockNumber !== "number") {
     return (
-      <div className="flex justify-end items-center w-full space-x-2">
+      <div className="flex w-full items-center justify-end space-x-2">
         <h3>You need to connect your Metamask</h3>
         <button
-          className="p-2 bg-indigo-500 rounded-sm text-white"
+          className="rounded-sm bg-indigo-500 p-2 text-white"
           onClick={handleConnectMetamaskClick}
         >
           Connect wallet
@@ -216,7 +216,7 @@ function Mint({
         onChange={handleChange}
       />
       <button
-        className="bg-slate-400 rounded-sm p-1 hover:cursor-pointer"
+        className="rounded-sm bg-slate-400 p-1 hover:cursor-pointer"
         disabled={isDisabled}
         onClick={handleMint}
       >

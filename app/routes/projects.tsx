@@ -3,30 +3,30 @@ import { Link, Outlet } from "remix"
 
 export default function Index(): ReactElement {
   return (
-    <div className="h-screen w-screen flex flex-col items-center justify-between p-20">
+    <div className="flex h-screen w-screen flex-col items-center justify-between p-20">
       <nav>
         <ul className="space-x-4">
-          <Link className="hover:underline underline-offset-2" to="counter">
+          <Link className="underline-offset-2 hover:underline" to="counter">
             Counter
           </Link>
-          <Link className="hover:underline underline-offset-2" to="waver">
+          <Link className="underline-offset-2 hover:underline" to="waver">
             Waver
           </Link>
-          <Link className="hover:underline underline-offset-2" to="transfers">
+          <Link className="underline-offset-2 hover:underline" to="transfers">
             Transfers
           </Link>
-          <Link className="hover:underline underline-offset-2" to="mint">
+          <Link className="underline-offset-2 hover:underline" to="mint">
             Mint
           </Link>
-          <Link className="hover:underline underline-offset-2" to="indexing">
+          <Link className="underline-offset-2 hover:underline" to="indexing">
             Indexing
           </Link>
-          <Link className="hover:underline underline-offset-2" to="dao">
+          <Link className="underline-offset-2 hover:underline" to="dao">
             Dao
           </Link>
         </ul>
       </nav>
-      <div className="flex items-center justify-center flex-1 w-full">
+      <div className="flex w-full flex-1 items-center justify-center">
         <Outlet />
       </div>
     </div>
