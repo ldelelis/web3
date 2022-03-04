@@ -8,3 +8,7 @@ export type AddResult = {
   mode?: number
   mtime?: Mtime
 }
+export type PublishResult = {
+  name: string
+  value: string
+}

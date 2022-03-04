@@ -1,7 +1,9 @@
 import { create } from "ipfs-core"
 import type { CID, IPFS } from "ipfs-core"
 
-import { AddResult } from "~/types"
+// TODO: IPNS functionality
+// import type { AddResult, PublishResult } from "~/types"
+import type { AddResult } from "~/types"
 
 export function getUrl(addResult: AddResult): string {
   const IPFS_GATEWAY = "https://ipfs.io/ipfs/"
@@ -29,8 +31,8 @@ export async function setFile(ipfs: IPFS, file: File): Promise<AddResult> {
 // 3. setString
 export async function setString(
   ipfs: IPFS,
-  path: string,
   string: string,
+  path?: string,
 ): Promise<AddResult> {
   const textEncoder = new TextEncoder()
 
@@ -51,20 +53,40 @@ export async function getString(ipfs: IPFS, cid: CID): Promise<string> {
 
   let string = ""
   for await (const chunk of uint8Array) {
-    console.log("forawait ~ decoder.decode(chunk)", decoder.decode(chunk))
     string += decoder.decode(chunk)
   }
-
-  console.log("forawait ~ string", string)
 
   return string
 }
 
+// TODO: IPNS functionality
+// export async function addToIpns(ipfs: IPFS, cid: CID): Promise<PublishResult> {
+//   const address = `/ipfs/${cid.toV1()}`
+
+//   const publishResult = await ipfs.name.publish(address)
+
+//   return publishResult
+// }
+
 // 5. setJson
-// export async function setJson(ipfs: IPFS, file: File): Promise<AddResult> {}
+// TODO: IPNS functionality
+// export async function setJson(ipfs: IPFS, json: JSON): Promise<AddResult> {
+//   const string = JSON.stringify(json)
+//   const addResult = await setString(ipfs, string)
+//   const { cid } = addResult
+
+//   await addToIpns(ipfs, cid)
+
+//   return addResult
+// }
 
 // 6. getJson
-// export async function getJson(ipfs: IPFS, cid: CID): Promise<JSON> {}
+export async function getJson<T>(ipfs: IPFS, cid: CID): Promise<T> {
+  const string = await getString(ipfs, cid)
+  const json = JSON.parse(string)
+
+  return json
+}
 
 //////////////////////////////////////
 //// Setting IPFS in global object

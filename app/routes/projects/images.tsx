@@ -32,6 +32,14 @@ export const action: ActionFunction = async ({ request }) => {
   const ipfs = await getIpfs()
   const addResult = await setFile(ipfs, file)
 
+  // TODO: enable saving to IPNS
+  // const { cid } = addResult
+  // const publishResult = await addToIpns(ipfs, cid)
+
+  // const { name, value } = publishResult
+  // console.log("constaction:ActionFunction= ~ name", name)
+  // console.log("constaction:ActionFunction= ~ value", value)
+
   const src = getUrl(addResult)
 
   return {
@@ -43,10 +51,12 @@ type LoaderData = {
   images: string[]
 }
 
-export const loader: LoaderFunction = () => {
-  const images = [
-    "https://www.criptonoticias.com/wp-content/uploads/2021/11/argentina-estado-poco-capaz-buenas-peronas-vitalik-buterin-1140x570.jpg",
-  ]
+// const PINNED_IMAGES_HASH = "IPNS CID HASH"
+
+export const loader: LoaderFunction = async () => {
+  // const ipfs = await getIpfs()
+  // const images = await getJson<string[]>(ipfs, PINNED_IMAGES_HASH)
+  const images: string[] = []
 
   return json<LoaderData>({ images })
 }
