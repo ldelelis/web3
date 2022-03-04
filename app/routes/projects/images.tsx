@@ -12,7 +12,7 @@ import {
   unstable_createFileUploadHandler,
 } from "remix"
 
-import { getHash, getIpfs, setFile } from "~/helpers"
+import { getUrl, getIpfs, setFile } from "~/helpers"
 
 const uploadHandler = unstable_createFileUploadHandler({
   maxFileSize: 5_000_000,
@@ -32,7 +32,7 @@ export const action: ActionFunction = async ({ request }) => {
   const ipfs = await getIpfs()
   const addResult = await setFile(ipfs, file)
 
-  const src = getHash(addResult)
+  const src = getUrl(addResult)
 
   return {
     src,
