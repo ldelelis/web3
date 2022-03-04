@@ -12,8 +12,7 @@ import {
   unstable_createFileUploadHandler,
 } from "remix"
 
-import { AddResult } from "~/types"
-import { getIpfs, setFile } from "~/helpers"
+import { getHash, getIpfs, setFile } from "~/helpers"
 
 const uploadHandler = unstable_createFileUploadHandler({
   maxFileSize: 5_000_000,
@@ -33,7 +32,7 @@ export const action: ActionFunction = async ({ request }) => {
   const ipfs = await getIpfs()
   const addResult = await setFile(ipfs, file)
 
-  const src = getSrc(addResult)
+  const src = getHash(addResult)
 
   return {
     src,
@@ -86,11 +85,4 @@ function Upload(): ReactElement {
       </button>
     </Form>
   )
-}
-
-function getSrc(addResult: AddResult) {
-  const IPFS_GATEWAY = "https://ipfs.io/ipfs/"
-  const src = IPFS_GATEWAY + addResult.cid.toV1()
-
-  return src
 }

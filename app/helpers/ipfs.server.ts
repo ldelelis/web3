@@ -3,6 +3,13 @@ import type { CID, IPFS } from "ipfs-core"
 
 import { AddResult } from "~/types"
 
+export function getHash(addResult: AddResult): string {
+  const IPFS_GATEWAY = "https://ipfs.io/ipfs/"
+  const hash = IPFS_GATEWAY + addResult.cid.toV1()
+
+  return hash
+}
+
 // 1. setFile
 export async function setFile(ipfs: IPFS, file: File): Promise<AddResult> {
   const buffer = await file.arrayBuffer()
