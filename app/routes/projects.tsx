@@ -24,6 +24,9 @@ export default function Index(): ReactElement {
           <Link className="underline-offset-2 hover:underline" to="dao">
             Dao
           </Link>
+          <Link className="underline-offset-2 hover:underline" to="images">
+            Images
+          </Link>
         </ul>
       </nav>
       <div className="flex w-full flex-1 items-center justify-center">

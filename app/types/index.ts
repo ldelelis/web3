@@ -1,3 +1,4 @@
+export * from "./ipfs"
 export * from "./chain"
 export * from "./factories"
 
