@@ -13,11 +13,12 @@
     "paths": {
       "~/*": ["./app/*"]
     },
-    "noEmit": true
+    "noEmit": true,
+    "module": "esnext"
   },
   "include": [
-    "remix.env.d.ts", 
-    "**/*.ts", 
-    "**/*.tsx", 
+    "remix.env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
   ]
 }

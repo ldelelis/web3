@@ -1,6 +1,7 @@
 {
   "private": true,
   "name": "web3",
+  "type": "module",
   "description": "My collection of web3 exercises, all in one place, well separated",
   "license": "MIT",
   "sideEffects": false,

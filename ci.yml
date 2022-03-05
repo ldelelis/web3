@@ -1,0 +1,6 @@
+steps:
+  - docker build -f Dockerfile.node -t indexer
+  - docker tag ghcr.io/niconiahi/indexer:latest indexer
+  - docker tag ghcr.io/niconiahi/indexer:v2.5.0 indexer
+  - docker tag ghcr.io/niconiahi/indexer:develop indexer
+  - docker push ghcr.io/niconiahi/indexer
