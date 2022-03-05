@@ -1,3 +1,4 @@
+// import fs from "fs"
 import { create } from "ipfs-core"
 import type { CID, IPFS } from "ipfs-core"
 
@@ -6,7 +7,7 @@ import type { CID, IPFS } from "ipfs-core"
 import type { AddResult } from "~/types"
 
 export function getUrl(addResult: AddResult): string {
-  const IPFS_GATEWAY = "https://ipfs.io/ipfs/"
+  const IPFS_GATEWAY = "https://cloudflare-ipfs.com/ipfs/"
   const hash = addResult.cid.toV1()
   const url = IPFS_GATEWAY + hash
 
@@ -21,6 +22,22 @@ export async function setFile(ipfs: IPFS, file: File): Promise<AddResult> {
     path: file.name,
     content: buffer,
   })
+
+  // const reader = new FileReader()
+
+  // https://developer.mozilla.org/en-US/docs/Web/API/FileReader/result
+  // reader.onload = function () {
+  //   const result = reader.result as string | null
+  //   console.log("setFile ~ result", result)
+
+  //   if (!result) return
+
+  //   const path = "../images"
+
+  //   fs.writeFileSync(path, result)
+  // }
+
+  // reader.readAsText(file)
 
   return addResult
 }
